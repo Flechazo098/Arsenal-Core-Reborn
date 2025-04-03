@@ -1,0 +1,8 @@
+{
+  "size": 1,
+  "icon": "curios:slot/empty_belt_slot",
+  "add_cosmetic": false,
+  "render_toggle": false,
+  "order": 1000,
+  "validators": ["arsenal_core:weapon_frog"]
+}
