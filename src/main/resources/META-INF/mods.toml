@@ -1,54 +1,29 @@
 
 modLoader="javafml"
-loaderVersion="[36,)"
+loaderVersion="[47,)"
 license="MIT License"
-issueTrackerURL="https://github.com/0999312/Chinese-Style-Sword/issues" 
+issueTrackerURL="https://github.com/0999312/Arsenal-Core/issues"
 [[mods]]
-modId="chinese_sword"
-version="${file.jarVersion}"
-displayName="Chinese Style Sword"
+modId="arsenal_core"
+version="${mod_version}"
+displayName="Arsenal Core"
 logoFile="sword_logo.png"
-credits="China"
+credits="The world of sword"
 authors="MCMOD Modding Group"
 description='''
-"For ten years I have been polishing this sword;
-Its frosty edge has never been put to the test.
-Now I am holding it and showing it to you, sir:
-Is there anyone suffering from injustice?"
-
-Since Minecraft was born, we have seen many types of legendary weapons in this blocky world.
-As for swords, we have got the sword which can survive in the lava.
-We also have played with the sword which kills any enemies instantly.
-However you may find that you are just wielding them like a weak stick,
-because they are lack of the mighty spirit of a real sword.
-
-Now we will show this mod to you.
-It brings Chinese swords into the Minecraft world.
-You can put your cherished sword into beautiful sheaths, and wear it by your side as decoration.
-But what's more important is you can gracefully and swiftly slay any enemies in your way with your amazing sword skills.
-
-Unlike those weapon mods you always see on CurseForge,
-We do not design complex recipes or expensive materials to craft a sword.
-All you need to do is combine your Vanilla sword with a sheath,
-by doing this your sword will regain its lost spirit, and become a Chinese sword.
-These swords will not be too over-powered. 
-Comparing to Vanilla swords, our swords will be *moderated* powerful,
-and will not make your Minecraft modpack unbalanced.
-
-"A great man should carry his three-foot sword and establish an unparalleled achievement."
-The sword, carrying the mission of spreading Chinese sword culture throughout the Minecraft world, will definitely become your most reliable friend in your Minecraft adventure!
+This is a mod.
 '''
 
-[[dependencies.chinese_sword]]
+[[dependencies.arsenal_core]]
     # the modid of the dependency
     modId="forge"
     mandatory=true
-    versionRange="[36,)"
+    versionRange="[47,)"
     ordering="NONE"
     side="BOTH"
-[[dependencies.chinese_sword]]
+[[dependencies.arsenal_core]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.5,1.17)"
+    versionRange="[1.20, 1.21)"
     ordering="NONE"
     side="BOTH"
