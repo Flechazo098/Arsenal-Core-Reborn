@@ -3,7 +3,7 @@ name: Build Mod Jar
 on:
   workflow_dispatch:  # 手动触发
   push:
-    branches: [ "main" ]  # 或根据你实际的分支名来设置
+    branches: [ "master" ]  # 或根据你实际的分支名来设置
 
 jobs:
   build:
