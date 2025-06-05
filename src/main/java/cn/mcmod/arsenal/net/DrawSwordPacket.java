@@ -15,7 +15,6 @@ import net.minecraft.resources.ResourceLocation;
 
 public record DrawSwordPacket(String message) implements CustomPacketPayload {
     public static final ResourceLocation ID = new ResourceLocation(ArsenalCore.MODID, "draw_sword");
-    private static final Random RANDOM = new Random();
 
     public DrawSwordPacket(FriendlyByteBuf buffer) {
         this(buffer.readUtf(32767));
