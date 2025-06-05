@@ -7,7 +7,7 @@
     ],
     "key": {
         "I": {
-            "tag": "forge:cobblestone"
+            "tag": "c:cobblestones"
         },
         "L": {
             "tag": "minecraft:logs"
@@ -16,10 +16,10 @@
             "tag": "minecraft:planks"
         },
         "S": {
-            "tag": "forge:string"
+            "tag": "c:strings"
         }
     },
     "result": {
-        "item": "arsenal_core:stone_ancient_sword_sheath"
+        "id": "arsenal_core:stone_ancient_sword_sheath"
     }
 }

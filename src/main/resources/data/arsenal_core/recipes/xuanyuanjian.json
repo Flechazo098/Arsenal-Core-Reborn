@@ -7,7 +7,7 @@
     ],
     "key": {
         "I": {
-            "tag": "forge:storage_blocks/diamond"
+            "tag": "c:storage_blocks/diamond"
         },
         "L": {
             "item": "arsenal_core:netherite_ancient_sword"
@@ -16,10 +16,10 @@
             "item": "minecraft:dragon_egg"
         },
         "S": {
-            "tag": "forge:nether_stars"
+            "tag": "c:nether_stars"
         }
     },
     "result": {
-        "item": "arsenal_core:xuanyuanjian"
+        "id": "arsenal_core:xuanyuanjian"
     }
 }

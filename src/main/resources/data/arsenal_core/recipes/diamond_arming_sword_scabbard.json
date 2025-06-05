@@ -7,16 +7,16 @@
     ],
     "key": {
         "I": {
-            "tag": "forge:gems/diamond"
+            "tag": "c:gems/diamond"
         },
         "L": {
-            "tag": "forge:leather"
+            "tag": "c:leathers"
         },
         "P": {
             "tag": "minecraft:planks"
         }
     },
     "result": {
-        "item": "arsenal_core:diamond_arming_sword_scabbard"
+        "id": "arsenal_core:diamond_arming_sword_scabbard"
     }
 }

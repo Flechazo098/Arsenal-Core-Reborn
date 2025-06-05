@@ -7,7 +7,7 @@
     ],
     "key": {
         "I": {
-            "tag": "forge:ingots/gold"
+            "tag": "c:ingots/gold"
         },
         "L": {
             "tag": "minecraft:logs"
@@ -16,10 +16,10 @@
             "tag": "minecraft:planks"
         },
         "S": {
-            "tag": "forge:leather"
+            "tag": "c:leathers"
         }
     },
     "result": {
-        "item": "arsenal_core:golden_smallsword_scabbard"
+        "id": "arsenal_core:golden_smallsword_scabbard"
     }
 }

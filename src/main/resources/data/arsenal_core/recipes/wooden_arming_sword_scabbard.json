@@ -10,13 +10,13 @@
             "tag": "minecraft:planks"
         },
         "L": {
-            "tag": "forge:leather"
+            "tag": "c:leathers"
         },
         "P": {
             "tag": "minecraft:planks"
         }
     },
     "result": {
-        "item": "arsenal_core:wooden_arming_sword_scabbard"
+        "id": "arsenal_core:wooden_arming_sword_scabbard"
     }
 }

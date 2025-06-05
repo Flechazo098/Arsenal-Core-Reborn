@@ -16,10 +16,10 @@
             "tag": "minecraft:planks"
         },
         "S": {
-            "tag": "forge:leather"
+            "tag": "c:leathers"
         }
     },
     "result": {
-        "item": "arsenal_core:wooden_rapier_scabbard"
+        "id": "arsenal_core:wooden_rapier_scabbard"
     }
 }

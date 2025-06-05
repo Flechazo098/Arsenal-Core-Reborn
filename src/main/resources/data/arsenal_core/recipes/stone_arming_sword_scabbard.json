@@ -7,16 +7,16 @@
     ],
     "key": {
         "I": {
-            "tag": "forge:cobblestone"
+            "tag": "c:cobblestones"
         },
         "L": {
-            "tag": "forge:leather"
+            "tag": "c:leathers"
         },
         "P": {
             "tag": "minecraft:planks"
         }
     },
     "result": {
-        "item": "arsenal_core:stone_arming_sword_scabbard"
+        "id": "arsenal_core:stone_arming_sword_scabbard"
     }
 }

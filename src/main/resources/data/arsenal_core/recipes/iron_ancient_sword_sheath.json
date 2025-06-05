@@ -7,7 +7,7 @@
     ],
     "key": {
         "I": {
-            "tag": "forge:ingots/iron"
+            "tag": "c:ingots/iron"
         },
         "L": {
             "tag": "minecraft:logs"
@@ -16,10 +16,10 @@
             "tag": "minecraft:planks"
         },
         "S": {
-            "tag": "forge:string"
+            "tag": "c:strings"
         }
     },
     "result": {
-        "item": "arsenal_core:iron_ancient_sword_sheath"
+        "id": "arsenal_core:iron_ancient_sword_sheath"
     }
 }
