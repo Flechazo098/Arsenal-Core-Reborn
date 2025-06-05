@@ -16,7 +16,7 @@
             "tag": "minecraft:planks"
         },
         "S": {
-            "tag": "neoforge:leather"
+            "tag": "forge:leather"
         }
     },
     "result": {

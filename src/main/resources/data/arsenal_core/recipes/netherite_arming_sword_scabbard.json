@@ -7,10 +7,10 @@
     ],
     "key": {
         "I": {
-            "tag": "neoforge:ingots/netherite"
+            "tag": "forge:ingots/netherite"
         },
         "L": {
-            "tag": "neoforge:leather"
+            "tag": "forge:leather"
         },
         "P": {
             "tag": "minecraft:planks"

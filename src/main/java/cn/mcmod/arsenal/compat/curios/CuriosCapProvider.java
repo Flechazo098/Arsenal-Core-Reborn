@@ -1,39 +1,24 @@
 package cn.mcmod.arsenal.compat.curios;
 
 import cn.mcmod.arsenal.ArsenalCore;
+import cn.mcmod.arsenal.data.AttachmentRegistry;
+import cn.mcmod.arsenal.item.ItemRegistry;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import top.theillusivec4.curios.api.type.capability.ICurio;
-
-import java.util.function.Supplier;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import top.theillusivec4.curios.api.CuriosCapability;
 
 public class CuriosCapProvider {
-    public static final DeferredRegister<AttachmentType<?>> CURIO_ATTACHMENT_TYPES =
-            DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, ArsenalCore.MODID);
 
-    public static final Supplier<AttachmentType<CuriosWrapper>> CURIO = CURIO_ATTACHMENT_TYPES.register(
-            "curio", () -> AttachmentType.builder((holder) -> new CuriosWrapper(ItemStack.EMPTY))
-                    .serialize(CuriosWrapper.CODEC)
-                    .build());
-
-
-    public static void register(net.neoforged.bus.api.IEventBus modEventBus) {
-        CURIO_ATTACHMENT_TYPES.register(modEventBus);
-        ItemHandlerCapProvider.register(modEventBus);
+    public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        if (ArsenalCore.curiosLoaded) {
+            event.registerItem(CuriosCapability.ITEM, (stack, context) -> new CuriosWrapper(stack), ItemRegistry.WEAPON_FROG.get());
+        }
     }
 
     public static void attachCurio(ItemStack stack) {
-        if (!stack.hasData(CURIO)) {
-            stack.setData(CURIO, new CuriosWrapper(stack));
+        if (!stack.hasData(AttachmentRegistry.ITEM_HANDLER)) {
+            stack.setData(AttachmentRegistry.ITEM_HANDLER, new ItemStackHandler(1));
         }
-    }
-
-    public static ICurio getCurio(ItemStack stack) {
-        if (!stack.hasData(CURIO)) {
-            attachCurio(stack);
-        }
-        return stack.getData(CURIO);
     }
 }

@@ -7,7 +7,7 @@
     ],
     "key": {
         "I": {
-            "tag": "neoforge:cobblestone"
+            "tag": "forge:cobblestone"
         },
         "L": {
             "tag": "minecraft:logs"
@@ -16,7 +16,7 @@
             "tag": "minecraft:planks"
         },
         "S": {
-            "tag": "neoforge:leather"
+            "tag": "forge:leather"
         }
     },
     "result": {

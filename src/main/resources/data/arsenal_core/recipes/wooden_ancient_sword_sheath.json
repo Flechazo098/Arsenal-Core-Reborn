@@ -16,7 +16,7 @@
             "tag": "minecraft:planks"
         },
         "S": {
-            "tag": "neoforge:string"
+            "tag": "forge:string"
         }
     },
     "result": {

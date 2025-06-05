@@ -22,10 +22,7 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 
-@Mod.EventBusSubscriber(
-        bus = Mod.EventBusSubscriber.Bus.MOD,
-        value = {Dist.CLIENT}
-)
+@Mod.EventBusSubscriber(modid = ArsenalCore.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientEventHandler {
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent

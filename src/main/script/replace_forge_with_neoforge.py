@@ -8,7 +8,7 @@ def replace_forge_with_neoforge(directory):
                 try:
                     with open(file_path, "r", encoding="utf-8") as f:
                         content = f.read()
-                    new_content = content.replace("forge:", "neoforge:")
+                    new_content = content.replace("neoforge:", "forge:")
                     if new_content != content:
                         with open(file_path, "w", encoding="utf-8") as f:
                             f.write(new_content)

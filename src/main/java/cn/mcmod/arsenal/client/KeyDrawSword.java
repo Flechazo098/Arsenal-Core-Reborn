@@ -10,15 +10,15 @@ import cn.mcmod.arsenal.net.DrawSwordPacket;
 import com.mojang.blaze3d.platform.InputConstants.Type;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyModifier;
+import net.neoforged.neoforge.network.PacketDistributor;
 
-@Mod.EventBusSubscriber({Dist.CLIENT})
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class KeyDrawSword {
     public static final KeyMapping KEY = new KeyMapping("key.draw_sword", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, Type.MOUSE, 1, "key.category.arsenal");
 
@@ -27,7 +27,7 @@ public class KeyDrawSword {
         if (KEY.isDown() && ArsenalCore.curiosLoaded) {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player != null) {
-                mc.getConnection().send(new ClientboundCustomPayloadPacket(new DrawSwordPacket("Reika Battou")));
+                PacketDistributor.SERVER.noArg().send(new DrawSwordPacket("Reika Battou"));
             }
         }
     }

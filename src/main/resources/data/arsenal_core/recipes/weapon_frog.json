@@ -7,10 +7,10 @@
     ],
     "key": {
         "I": {
-            "tag": "neoforge:leather"
+            "tag": "forge:leather"
         },
         "L": {
-            "tag": "neoforge:rods/wooden"
+            "tag": "forge:rods/wooden"
         }
     },
     "result": {

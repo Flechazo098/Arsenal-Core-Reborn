@@ -1,15 +1,12 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package cn.mcmod.arsenal;
 
 import cn.mcmod.arsenal.api.tier.WeaponTierRegistry;
 import cn.mcmod.arsenal.compat.curios.CuriosCapProvider;
+import cn.mcmod.arsenal.data.AttachmentRegistry;
 import cn.mcmod.arsenal.item.ArsenalCreativeModTab;
 import cn.mcmod.arsenal.item.ItemRegistry;
 import cn.mcmod.arsenal.net.DrawSwordPacket;
+import cn.mcmod.arsenal.net.NetworkHandler;
 import cn.mcmod.arsenal.tier.VanillaWeaponTiers;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -32,22 +29,13 @@ public class ArsenalCore {
     public ArsenalCore(IEventBus modEventBus) {
         curiosLoaded = ModList.get().isLoaded("curios");
         this.registerVanillaTiers();
-        modEventBus.addListener(this::registerPayloadHandlers);
+        modEventBus.addListener(CuriosCapProvider::registerCapabilities);
         ItemRegistry.ITEMS.register(modEventBus);
-        CuriosCapProvider.register(modEventBus);
+        AttachmentRegistry.register(modEventBus);
         ArsenalCreativeModTab.CREATIVE_MODE_TABS.register(modEventBus);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ArsenalConfig.SPEC);
     }
 
-    @SubscribeEvent
-    public void registerPayloadHandlers (final RegisterPayloadHandlerEvent event) {
-        final IPayloadRegistrar registrar = event.registrar(MODID)
-                .versioned("1.0");
-
-        registrar.play(DrawSwordPacket.ID, DrawSwordPacket::new, handler -> handler
-                .server(DrawSwordPacket::handle)
-        );
-    }
     private void registerVanillaTiers() {
         WeaponTierRegistry.registerAll(
                 VanillaWeaponTiers.WOOD.get(),
