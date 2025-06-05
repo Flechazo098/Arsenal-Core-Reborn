@@ -1,34 +1,39 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package cn.mcmod.arsenal.compat.curios;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
+import cn.mcmod.arsenal.ArsenalCore;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
-import top.theillusivec4.curios.api.CuriosCapability;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import top.theillusivec4.curios.api.type.capability.ICurio;
 
-public class CuriosCapProvider extends ItemHandlerCapProvider {
-    private final ICurio capInstance;
+import java.util.function.Supplier;
 
-    public CuriosCapProvider(ItemStack stack, CompoundTag nbt) {
-        super(stack, nbt);
-        this.capInstance = new CuriosWrapper(stack);
+public class CuriosCapProvider {
+    public static final DeferredRegister<AttachmentType<?>> CURIO_ATTACHMENT_TYPES =
+            DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, ArsenalCore.MODID);
+
+    public static final Supplier<AttachmentType<CuriosWrapper>> CURIO = CURIO_ATTACHMENT_TYPES.register(
+            "curio", () -> AttachmentType.builder((holder) -> new CuriosWrapper(ItemStack.EMPTY))
+                    .serialize(CuriosWrapper.CODEC)
+                    .build());
+
+
+    public static void register(net.neoforged.bus.api.IEventBus modEventBus) {
+        CURIO_ATTACHMENT_TYPES.register(modEventBus);
+        ItemHandlerCapProvider.register(modEventBus);
     }
 
-    @Nonnull
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        return cap == CuriosCapability.ITEM ? LazyOptional.of(this::getCuriosInstance).cast() : super.getCapability(cap, side);
+    public static void attachCurio(ItemStack stack) {
+        if (!stack.hasData(CURIO)) {
+            stack.setData(CURIO, new CuriosWrapper(stack));
+        }
     }
 
-    public ICurio getCuriosInstance() {
-        return this.capInstance;
+    public static ICurio getCurio(ItemStack stack) {
+        if (!stack.hasData(CURIO)) {
+            attachCurio(stack);
+        }
+        return stack.getData(CURIO);
     }
 }

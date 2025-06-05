@@ -9,76 +9,87 @@ import cn.mcmod.arsenal.ArsenalCore;
 import cn.mcmod.arsenal.api.IDrawable;
 import cn.mcmod.arsenal.item.WeaponFrogItem;
 
+import java.util.Optional;
 import java.util.Random;
-import java.util.function.Supplier;
+
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.SlotTypePreset;
 import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 
-public class DrawSwordPacket {
-    private final String message;
+public record DrawSwordPacket(String message) implements CustomPacketPayload {
+    public static final ResourceLocation ID = new ResourceLocation(ArsenalCore.MODID, "draw_sword");
     private static final Random RANDOM = new Random();
 
     public DrawSwordPacket(FriendlyByteBuf buffer) {
-        this.message = buffer.readUtf(32767);
+        this(buffer.readUtf(32767));
     }
 
-    public DrawSwordPacket(String message) {
-        this.message = message;
-    }
-
-    public void toBytes(FriendlyByteBuf buf) {
+    @Override
+    public void write(FriendlyByteBuf buf) {
         buf.writeUtf(this.message);
     }
 
-    public void handler(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer player = ctx.get().getSender();
+    @Override
+    public ResourceLocation id() {
+        return ID;
+    }
+    public static void handle(final DrawSwordPacket payload, final PlayPayloadContext context) {
+        context.workHandler().submitAsync(() -> {
+            ServerPlayer player = (ServerPlayer) context.player().orElse(null);
+            if (player == null) {
+                return;
+            }
+
             if (ArsenalCore.curiosLoaded) {
                 String beltSlotId = "belt";
-                CuriosApi.getCuriosInventory(player).ifPresent(itemHandler ->
-                        itemHandler.getStacksHandler(beltSlotId).ifPresent(stacksHandler -> {
-                            IDynamicStackHandler stackHandler = stacksHandler.getStacks();
+                CuriosApi.getCuriosInventory(player).flatMap(itemHandler -> itemHandler.getStacksHandler(beltSlotId)).ifPresent(stacksHandler -> {
+                    IDynamicStackHandler stackHandler = stacksHandler.getStacks();
 
-                            for(int i = 0; i < stackHandler.getSlots(); ++i) {
-                                if (stackHandler.getStackInSlot(i).getItem() instanceof WeaponFrogItem) {
-                                    stackHandler.getStackInSlot(i).getCapability(ForgeCapabilities.ITEM_HANDLER, null).ifPresent(cap -> {
-                                        if (cap.getStackInSlot(0).isEmpty()) {
-                                            sheathSword(player, cap);
-                                        } else {
-                                            drawSword(player, cap.getStackInSlot(0));
-                                            cap.extractItem(0, 1, false);
-                                        }
-                                    });
-                                    return;
+                    for (int i = 0; i < stackHandler.getSlots(); ++ i) {
+                        ItemStack curiosStack = stackHandler.getStackInSlot(i);
+                        if (curiosStack.getItem() instanceof WeaponFrogItem) {
+                            Optional.ofNullable(curiosStack.getCapability(Capabilities.ItemHandler.ITEM)).ifPresent(cap -> {
+                                if (cap.getStackInSlot(0).isEmpty()) {
+                                    sheathSword(player, cap);
+                                } else {
+                                    drawSword(player, cap.getStackInSlot(0));
+                                    cap.extractItem(0, 1, false);
                                 }
-                            }
-                        })
-                );
+                            });
+                            return;
+                        }
+                    }
+                });
             }
+        }).exceptionally(e -> {
+            ArsenalCore.getLogger().error("Failed to handle DrawSwordPacket", e);
+            return null;
         });
-        ctx.get().setPacketHandled(true);
     }
 
-    private void sheathSword(ServerPlayer player, IItemHandler handler) {
+    private static void sheathSword(ServerPlayer player, net.neoforged.neoforge.items.IItemHandler handler) {
         ItemStack mainHandItem = player.getMainHandItem();
         if (mainHandItem.getItem() instanceof IDrawable) {
             handler.insertItem(0, mainHandItem.copy(), false);
             mainHandItem.shrink(1);
+            SoundEvent soundEvent = SoundEvents.ITEM_BREAK;
+            Holder<SoundEvent> soundHolder = BuiltInRegistries.SOUND_EVENT.wrapAsHolder(soundEvent);
+
             player.connection.send(new ClientboundSoundPacket(
-                    ForgeRegistries.SOUND_EVENTS.getDelegateOrThrow(SoundEvents.ITEM_BREAK),
+                    soundHolder,
                     SoundSource.PLAYERS,
                     player.getX(),
                     player.getY(),
@@ -91,8 +102,7 @@ public class DrawSwordPacket {
     }
 
     private static void drawSword(ServerPlayer player, ItemStack blade) {
-        if (blade.getItem() instanceof IDrawable) {
-            IDrawable sword = (IDrawable)blade.getItem();
+        if (blade.getItem() instanceof IDrawable sword) {
             ItemStack mainHandItem = player.getMainHandItem().copy();
             player.setItemInHand(InteractionHand.MAIN_HAND, blade.copy());
             if (!mainHandItem.isEmpty() && !player.addItem(mainHandItem)) {
@@ -100,8 +110,11 @@ public class DrawSwordPacket {
             }
 
             if (sword.drawSwordAttack(player, mainHandItem)) {
+                SoundEvent soundEvent = SoundEvents.PLAYER_ATTACK_SWEEP;
+                Holder<SoundEvent> soundHolder = BuiltInRegistries.SOUND_EVENT.wrapAsHolder(soundEvent);
+
                 player.connection.send(new ClientboundSoundPacket(
-                        ForgeRegistries.SOUND_EVENTS.getDelegateOrThrow(SoundEvents.PLAYER_ATTACK_SWEEP),
+                        soundHolder,
                         SoundSource.PLAYERS,
                         player.getX(),
                         player.getY(),

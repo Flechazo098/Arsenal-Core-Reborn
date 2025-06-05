@@ -1,41 +1,31 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package cn.mcmod.arsenal.compat.curios;
 
-import net.minecraft.core.Direction;
+import cn.mcmod.arsenal.ArsenalCore;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.ItemStackHandler;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
-public class ItemHandlerCapProvider implements ICapabilitySerializable<CompoundTag> {
-    public ItemStack stack;
-    public final ItemStackHandler handler;
+import java.util.function.Supplier;
 
-    public ItemHandlerCapProvider(ItemStack stack, CompoundTag nbt) {
-        this.stack = stack;
-        this.handler = new ItemStackHandler();
+public class ItemHandlerCapProvider {
+    public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES =
+            DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, ArsenalCore.MODID);
+
+    public static final Supplier<AttachmentType<ItemStackHandler>> ITEM_HANDLER = ATTACHMENT_TYPES.register(
+            "item_handler", () -> AttachmentType.serializable(() -> new ItemStackHandler(1)).build());
+
+    public static void register(net.neoforged.bus.api.IEventBus modEventBus) {
+        ATTACHMENT_TYPES.register(modEventBus);
     }
 
-    public ItemStackHandler getInventory() {
-        return this.handler;
+    public static ItemStackHandler getInventory(ItemStack stack) {
+        return stack.getData(ITEM_HANDLER);
     }
 
-    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-        return cap == ForgeCapabilities.ITEM_HANDLER ? LazyOptional.of(() -> this.handler).cast() : LazyOptional.empty();
-    }
-
-    public CompoundTag serializeNBT() {
-        return this.handler.serializeNBT();
-    }
-
-    public void deserializeNBT(CompoundTag nbt) {
-        this.handler.deserializeNBT(nbt);
+    public static boolean hasInventory(ItemStack stack) {
+        return stack.hasData(ITEM_HANDLER);
     }
 }
