@@ -15,6 +15,6 @@ public class NetworkHandler {
         IPayloadRegistrar registrar = event.registrar(ArsenalCore.MODID).versioned("1.0");
 
         registrar.play(DrawSwordPacket.ID, DrawSwordPacket::new,
-                handler -> handler.server(ServerPayloadHandler.getInstance()::handleDrawSword));
+                handler -> handler.server(DrawSwordPacket::handleDrawSword));
     }
 }
