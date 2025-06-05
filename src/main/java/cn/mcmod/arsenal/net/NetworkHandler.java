@@ -1,20 +1,19 @@
 package cn.mcmod.arsenal.net;
 
-
 import cn.mcmod.arsenal.ArsenalCore;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
-import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-@Mod.EventBusSubscriber(modid = ArsenalCore.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = ArsenalCore.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class NetworkHandler {
 
     @SubscribeEvent
-    public static void registerPayloads(RegisterPayloadHandlerEvent event) {
-        IPayloadRegistrar registrar = event.registrar(ArsenalCore.MODID).versioned("1.0");
+    public static void onPayloadRegister(RegisterPayloadHandlersEvent event) {
 
-        registrar.play(DrawSwordPacket.ID, DrawSwordPacket::new,
-                handler -> handler.server(DrawSwordPacket::handleDrawSword));
+        PayloadRegistrar registrar = event.registrar("1.0");
+
+        registrar.playToServer(DrawSwordPacket.TYPE, DrawSwordPacket.STREAM_CODEC, DrawSwordPacket::handleDrawSword);
     }
 }

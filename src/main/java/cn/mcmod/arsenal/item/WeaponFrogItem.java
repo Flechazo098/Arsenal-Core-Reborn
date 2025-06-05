@@ -1,7 +1,7 @@
 package cn.mcmod.arsenal.item;
 
 import cn.mcmod.arsenal.ArsenalCore;
-import cn.mcmod.arsenal.data.AttachmentRegistry;
+import cn.mcmod.arsenal.data.ComponentRegistry;
 import cn.mcmod.arsenal.compat.curios.CuriosCapProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -16,14 +16,22 @@ public class WeaponFrogItem extends Item {
     }
 
     public static void initAttachments(ItemStack stack) {
-        ItemStackHandler handler = stack.getData(AttachmentRegistry.ITEM_HANDLER);
+        ItemStackHandler handler = stack.get(ComponentRegistry.ITEM_HANDLER_COMPONENT.get());
+        if (handler == null) {
+            stack.set(ComponentRegistry.ITEM_HANDLER_COMPONENT.get(), new ItemStackHandler(1));
+        }
         if (ArsenalCore.curiosLoaded) {
             CuriosCapProvider.attachCurio(stack);
         }
     }
 
     public static ItemStackHandler getInventory(ItemStack stack) {
-        return stack.getData(AttachmentRegistry.ITEM_HANDLER);
+        ItemStackHandler handler = stack.get(ComponentRegistry.ITEM_HANDLER_COMPONENT.get());
+        if (handler == null) {
+            handler = new ItemStackHandler(1);
+            stack.set(ComponentRegistry.ITEM_HANDLER_COMPONENT.get(), handler);
+        }
+        return handler;
     }
 
     @Override
@@ -35,7 +43,7 @@ public class WeaponFrogItem extends Item {
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
-        if (!stack.hasData(AttachmentRegistry.ITEM_HANDLER)) {
+        if (!stack.has(ComponentRegistry.ITEM_HANDLER_COMPONENT.get())) {
             initAttachments(stack);
         }
     }

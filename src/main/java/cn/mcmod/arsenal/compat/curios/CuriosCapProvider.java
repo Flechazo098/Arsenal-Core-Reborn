@@ -1,7 +1,7 @@
 package cn.mcmod.arsenal.compat.curios;
 
 import cn.mcmod.arsenal.ArsenalCore;
-import cn.mcmod.arsenal.data.AttachmentRegistry;
+import cn.mcmod.arsenal.data.ComponentRegistry;
 import cn.mcmod.arsenal.item.ItemRegistry;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -17,8 +17,8 @@ public class CuriosCapProvider {
     }
 
     public static void attachCurio(ItemStack stack) {
-        if (!stack.hasData(AttachmentRegistry.ITEM_HANDLER)) {
-            stack.setData(AttachmentRegistry.ITEM_HANDLER, new ItemStackHandler(1));
+        if (!stack.has(ComponentRegistry.ITEM_HANDLER_COMPONENT.get())) {
+            stack.set(ComponentRegistry.ITEM_HANDLER_COMPONENT.get(), new ItemStackHandler(1));
         }
     }
 }

@@ -30,7 +30,9 @@ public class SmallswordItem extends RapierItem {
     @Override
     public void DoStingAttack(ItemStack stack, LivingEntity attacker, LivingEntity target) {
         if (stack.getItem() instanceof TieredItem rapier) {
-            DoStingAttack(stack, rapier.getTier().getAttackDamageBonus() * 1.25F, EnchantmentHelper.getDamageBonus(stack, target.getMobType()) * 1.1F, attacker, target);
+            float baseDamage = rapier.getTier().getAttackDamageBonus() * 1.25F;
+            float enchantDamageBonus = EnchantmentHelper.getDamageBonus(stack, target.getType()) * 1.1F;
+            DoStingAttack(stack, baseDamage, enchantDamageBonus, attacker, target);
         }
     }
 }

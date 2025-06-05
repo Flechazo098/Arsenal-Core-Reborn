@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package cn.mcmod.arsenal.net;
 
 import cn.mcmod.arsenal.ArsenalCore;
@@ -10,11 +5,12 @@ import cn.mcmod.arsenal.ArsenalCore;
 import java.util.Random;
 
 import cn.mcmod.arsenal.api.IDrawable;
-import cn.mcmod.arsenal.data.AttachmentRegistry;
+import cn.mcmod.arsenal.data.ComponentRegistry;
 import cn.mcmod.arsenal.item.WeaponFrogItem;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.resources.ResourceLocation;
@@ -23,59 +19,59 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 
 public record DrawSwordPacket(String message) implements CustomPacketPayload {
-    public static final ResourceLocation ID = new ResourceLocation(ArsenalCore.MODID, "draw_sword");
+    public static final CustomPacketPayload.Type<DrawSwordPacket> TYPE =
+            new CustomPacketPayload.Type<>(new ResourceLocation(ArsenalCore.MODID, "draw_sword"));
 
-    public DrawSwordPacket(FriendlyByteBuf buffer) {
-        this(buffer.readUtf(32767));
-    }
+    public static final StreamCodec<FriendlyByteBuf, DrawSwordPacket> STREAM_CODEC =
+            StreamCodec.composite(
+                    net.minecraft.network.codec.ByteBufCodecs.STRING_UTF8,
+                    DrawSwordPacket::message,
+                    DrawSwordPacket::new
+            );
 
     @Override
-    public void write(FriendlyByteBuf buf) {
-        buf.writeUtf(this.message);
-    }
-
-    @Override
-    public ResourceLocation id() {
-        return ID;
+    public CustomPacketPayload.Type<DrawSwordPacket> type() {
+        return TYPE;
     }
 
     private static final Random RANDOM = new Random();
 
-    public static void handleDrawSword (DrawSwordPacket packet, IPayloadContext ctx) {
-        ServerPlayer player = (ServerPlayer) ctx.player().orElse(null);
-        if (player == null) return;
+    public static void handleDrawSword(DrawSwordPacket packet, IPayloadContext ctx) {
+        Player player = ctx.player();
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return;
+        }
 
         if (ArsenalCore.curiosLoaded) {
-            CuriosApi.getCuriosInventory(player).flatMap(inv -> inv.getStacksHandler("belt")).ifPresent(stacksHandler -> {
+            CuriosApi.getCuriosInventory(serverPlayer).flatMap(inv -> inv.getStacksHandler("belt")).ifPresent(stacksHandler -> {
                 IDynamicStackHandler handler = stacksHandler.getStacks();
                 for (int i = 0; i < handler.getSlots(); i++) {
                     ItemStack stack = handler.getStackInSlot(i);
                     if (stack.getItem() instanceof WeaponFrogItem) {
-                        stack.getExistingData(AttachmentRegistry.ITEM_HANDLER).ifPresent(cap -> {
-                            if (cap.getStackInSlot(0).isEmpty()) {
-                                sheathSword(player, cap);
+                        ItemStackHandler itemHandler = stack.get(ComponentRegistry.ITEM_HANDLER_COMPONENT.get());
+                        if (itemHandler != null) {
+                            if (itemHandler.getStackInSlot(0).isEmpty()) {
+                                sheathSword(serverPlayer, itemHandler);
                             } else {
-                                drawSword(player, cap.getStackInSlot(0));
-                                cap.extractItem(0, 1, false);
+                                drawSword(serverPlayer, itemHandler.getStackInSlot(0));
+                                itemHandler.extractItem(0, 1, false);
                             }
-                        });
+                        }
                         break;
                     }
                 }
             });
         }
     }
-
-
 
     private static void sheathSword(ServerPlayer player, IItemHandler handler) {
         ItemStack mainHandItem = player.getMainHandItem();
