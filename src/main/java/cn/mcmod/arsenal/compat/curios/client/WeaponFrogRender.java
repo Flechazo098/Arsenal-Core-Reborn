@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.Quaternionf;
@@ -28,7 +29,8 @@ public class WeaponFrogRender implements ICurioRenderer {
 
     @Override
     public <T extends LivingEntity, M extends EntityModel<T>> void render(ItemStack stack, SlotContext slotContext, PoseStack matrixStack, RenderLayerParent<T, M> renderLayerParent, MultiBufferSource renderTypeBuffer, int light, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-        ItemStack swordStack = WeaponFrogItem.getInventory(stack).getStackInSlot(0);
+        Level level = slotContext.entity().level();
+        ItemStack swordStack = WeaponFrogItem.getInventory(stack, level).getStackInSlot(0);
         if (swordStack.getItem() instanceof IDrawable sword) {
             this.renderItem(sword.getSheath(swordStack), matrixStack, renderTypeBuffer, light, slotContext.entity());
         }

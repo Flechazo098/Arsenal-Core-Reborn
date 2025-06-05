@@ -5,7 +5,6 @@ import cn.mcmod.arsenal.ArsenalCore;
 import java.util.Random;
 
 import cn.mcmod.arsenal.api.IDrawable;
-import cn.mcmod.arsenal.data.ComponentRegistry;
 import cn.mcmod.arsenal.item.WeaponFrogItem;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -21,6 +20,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -45,6 +45,7 @@ public record DrawSwordPacket(String message) implements CustomPacketPayload {
 
     private static final Random RANDOM = new Random();
 
+
     public static void handleDrawSword(DrawSwordPacket packet, IPayloadContext ctx) {
         Player player = ctx.player();
         if (!(player instanceof ServerPlayer serverPlayer)) {
@@ -57,13 +58,15 @@ public record DrawSwordPacket(String message) implements CustomPacketPayload {
                 for (int i = 0; i < handler.getSlots(); i++) {
                     ItemStack stack = handler.getStackInSlot(i);
                     if (stack.getItem() instanceof WeaponFrogItem) {
-                        ItemStackHandler itemHandler = stack.get(ComponentRegistry.ITEM_HANDLER_COMPONENT.get());
+                        Level level = serverPlayer.level();
+                        ItemStackHandler itemHandler = WeaponFrogItem.getInventory(stack, level);
                         if (itemHandler != null) {
                             if (itemHandler.getStackInSlot(0).isEmpty()) {
-                                sheathSword(serverPlayer, itemHandler);
+                                sheathSword(serverPlayer, itemHandler, stack, level);
                             } else {
                                 drawSword(serverPlayer, itemHandler.getStackInSlot(0));
                                 itemHandler.extractItem(0, 1, false);
+                                WeaponFrogItem.saveInventory(stack, itemHandler, level);
                             }
                         }
                         break;
@@ -73,11 +76,14 @@ public record DrawSwordPacket(String message) implements CustomPacketPayload {
         }
     }
 
-    private static void sheathSword(ServerPlayer player, IItemHandler handler) {
+    private static void sheathSword(ServerPlayer player, IItemHandler handler, ItemStack weaponFrogStack, Level level) {
         ItemStack mainHandItem = player.getMainHandItem();
         if (mainHandItem.getItem() instanceof IDrawable) {
             handler.insertItem(0, mainHandItem.copy(), false);
             mainHandItem.shrink(1);
+            if (handler instanceof ItemStackHandler itemStackHandler) {
+                WeaponFrogItem.saveInventory(weaponFrogStack, itemStackHandler, level);
+            }
             SoundEvent soundEvent = SoundEvents.ITEM_BREAK;
             Holder<SoundEvent> soundHolder = BuiltInRegistries.SOUND_EVENT.wrapAsHolder(soundEvent);
 

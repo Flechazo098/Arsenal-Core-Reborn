@@ -23,9 +23,9 @@ public class ArsenalCore {
     public ArsenalCore(IEventBus modEventBus) {
         curiosLoaded = ModList.get().isLoaded("curios");
         this.registerVanillaTiers();
-        modEventBus.addListener(CuriosCapProvider::registerCapabilities);
         ItemRegistry.ITEMS.register(modEventBus);
         ComponentRegistry.register(modEventBus);
+        modEventBus.addListener(CuriosCapProvider::registerCapabilities);
         ArsenalCreativeModTab.CREATIVE_MODE_TABS.register(modEventBus);
 
         ModList.get().getModContainerById(MODID).ifPresent(container -> {
