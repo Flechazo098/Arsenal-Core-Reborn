@@ -6,18 +6,10 @@
         "ISI"
     ],
     "key": {
-        "I": {
-            "tag": "c:storage_blocks/diamond"
-        },
-        "L": {
-            "item": "arsenal_core:netherite_ancient_sword"
-        },
-        "D": {
-            "item": "minecraft:dragon_egg"
-        },
-        "S": {
-            "tag": "c:nether_stars"
-        }
+        "I": "#c:storage_blocks/diamond",
+        "L": "arsenal_core:netherite_ancient_sword",
+        "D": "minecraft:dragon_egg",
+        "S": "#c:nether_stars"
     },
     "result": {
         "id": "arsenal_core:xuanyuanjian"

@@ -6,15 +6,9 @@
         "P  "
     ],
     "key": {
-        "I": {
-            "tag": "c:ingots/gold"
-        },
-        "L": {
-            "tag": "c:leathers"
-        },
-        "P": {
-            "tag": "minecraft:planks"
-        }
+        "I": "#c:ingots/gold",
+        "L": "#c:leathers",
+        "P": "#minecraft:planks"
     },
     "result": {
         "id": "arsenal_core:golden_longsword_scabbard"

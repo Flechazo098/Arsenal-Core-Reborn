@@ -6,18 +6,10 @@
         "PS "
     ],
     "key": {
-        "I": {
-            "tag": "c:ingots/gold"
-        },
-        "L": {
-            "tag": "minecraft:logs"
-        },
-        "P": {
-            "tag": "minecraft:planks"
-        },
-        "S": {
-            "tag": "c:leathers"
-        }
+        "I": "#c:ingots/gold",
+        "L": "#minecraft:logs",
+        "P": "#minecraft:planks",
+        "S": "#c:leathers"
     },
     "result": {
         "id": "arsenal_core:golden_rapier_scabbard"

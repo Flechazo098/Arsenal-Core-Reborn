@@ -6,9 +6,9 @@ import java.util.Set;
 
 
 public class WeaponTierRegistry {
-    private static final BiMap<String, WeaponTier> TIER_REG = HashBiMap.create();
+    private static final BiMap<String, WeaponToolMaterial> TIER_REG = HashBiMap.create();
 
-    public static void register(String name, WeaponTier tier) {
+    public static void register(String name, WeaponToolMaterial tier) {
         if (TIER_REG.containsKey(name)) {
             throw new IllegalArgumentException(String.format("The name %s has been registered twice.", name));
         } else {
@@ -16,18 +16,18 @@ public class WeaponTierRegistry {
         }
     }
 
-    public static void register(WeaponTier tier) {
+    public static void register(WeaponToolMaterial tier) {
         register(tier.getUnlocalizedName(), tier);
     }
 
-    public static void registerAll(WeaponTier... tiers) {
-        for(WeaponTier tier : tiers) {
+    public static void registerAll(WeaponToolMaterial... tiers) {
+        for(WeaponToolMaterial tier : tiers) {
             register(tier.getUnlocalizedName(), tier);
         }
 
     }
 
-    public static Set<WeaponTier> getWeaponTiers() {
+    public static Set<WeaponToolMaterial> getWeaponTiers() {
         return TIER_REG.values();
     }
 
@@ -35,11 +35,11 @@ public class WeaponTierRegistry {
         return TIER_REG.keySet();
     }
 
-    public static WeaponTier getWeaponTier(String name) {
+    public static WeaponToolMaterial getWeaponTier(String name) {
         return TIER_REG.get(name);
     }
 
-    public static String getTierName(WeaponTier tier) {
+    public static String getTierName(WeaponToolMaterial tier) {
         return TIER_REG.inverse().get(tier);
     }
 

@@ -1,7 +1,8 @@
 package cn.mcmod.arsenal.item;
 
+import cn.mcmod.arsenal.ArsenalCore;
 import cn.mcmod.arsenal.api.ArsenalAPI;
-import cn.mcmod.arsenal.api.tier.WeaponTier;
+import cn.mcmod.arsenal.api.tier.WeaponToolMaterial;
 import cn.mcmod.arsenal.item.chinese.AncientSwordItem;
 import cn.mcmod.arsenal.item.chinese.ChineseSwordItem;
 import cn.mcmod.arsenal.item.chinese.XuanyuanjianItem;
@@ -10,72 +11,95 @@ import cn.mcmod.arsenal.item.knight.LongswordItem;
 import cn.mcmod.arsenal.item.rapier.RapierItem;
 import cn.mcmod.arsenal.item.rapier.SmallswordItem;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.apache.commons.lang3.function.TriFunction;
 
 public class ItemRegistry {
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(BuiltInRegistries.ITEM, "arsenal_core");
+    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(ArsenalCore.MODID);
 
-    public static final DeferredHolder<Item, WeaponFrogItem> WEAPON_FROG = ITEMS.register("weapon_frog", WeaponFrogItem::new);
-
-    public static final Map<WeaponTier, DeferredHolder<Item, Item>> CHINESE_SWORD_SHEATH = ArsenalAPI.registerWeaponsAllTier(
-            tier -> register(tier.getUnlocalizedName() + "_chinese_sword_sheath", SwordSheathItem::new)
-    );
-    public static final Map<WeaponTier, DeferredHolder<Item, Item>> CHINESE_SWORD = ArsenalAPI.registerWeaponsAllTier(
-            tier -> register(tier.getUnlocalizedName() + "_chinese_sword",
-                    () -> new ChineseSwordItem(tier, new ItemStack(CHINESE_SWORD_SHEATH.get(tier).get())))
-    );
-
-    public static final Map<WeaponTier, DeferredHolder<Item, Item>> ANCIENT_SWORD_SHEATH = ArsenalAPI.registerWeaponsAllTier(
-            tier -> register(tier.getUnlocalizedName() + "_ancient_sword_sheath", SwordSheathItem::new)
-    );
-    public static final Map<WeaponTier, DeferredHolder<Item, Item>> ANCIENT_SWORD = ArsenalAPI.registerWeaponsAllTier(
-            tier -> register(tier.getUnlocalizedName() + "_ancient_sword",
-                    () -> new AncientSwordItem(tier, new ItemStack(ANCIENT_SWORD_SHEATH.get(tier).get())))
-    );
-
-    public static final Map<WeaponTier, DeferredHolder<Item, Item>> RAPIER_SCABBARD = ArsenalAPI.registerWeaponsAllTier(
-            tier -> register(tier.getUnlocalizedName() + "_rapier_scabbard", SwordSheathItem::new)
-    );
-    public static final Map<WeaponTier, DeferredHolder<Item, Item>> RAPIER = ArsenalAPI.registerWeaponsAllTier(
-            tier -> register(tier.getUnlocalizedName() + "_rapier",
-                    () -> new RapierItem(tier, new ItemStack(RAPIER_SCABBARD.get(tier).get())))
-    );
-
-    public static final Map<WeaponTier, DeferredHolder<Item, Item>> SMALLSWORD_SCABBARD = ArsenalAPI.registerWeaponsAllTier(
-            tier -> register(tier.getUnlocalizedName() + "_smallsword_scabbard", SwordSheathItem::new)
-    );
-    public static final Map<WeaponTier, DeferredHolder<Item, Item>> SMALLSWORD = ArsenalAPI.registerWeaponsAllTier(
-            tier -> register(tier.getUnlocalizedName() + "_smallsword",
-                    () -> new SmallswordItem(tier, new ItemStack(SMALLSWORD_SCABBARD.get(tier).get())))
-    );
-
-    public static final Map<WeaponTier, DeferredHolder<Item, Item>> ARMING_SWORD_SCABBARD = ArsenalAPI.registerWeaponsAllTier(
-            tier -> register(tier.getUnlocalizedName() + "_arming_sword_scabbard", SwordSheathItem::new)
-    );
-    public static final Map<WeaponTier, DeferredHolder<Item, Item>> ARMING_SWORD = ArsenalAPI.registerWeaponsAllTier(
-            tier -> register(tier.getUnlocalizedName() + "_arming_sword",
-                    () -> new ArmingSwordItem(tier, new ItemStack(ARMING_SWORD_SCABBARD.get(tier).get())))
-    );
-
-    public static final Map<WeaponTier, DeferredHolder<Item, Item>> LONGSWORD_SCABBARD = ArsenalAPI.registerWeaponsAllTier(
-            tier -> register(tier.getUnlocalizedName() + "_longsword_scabbard", SwordSheathItem::new)
-    );
-    public static final Map<WeaponTier, DeferredHolder<Item, Item>> LONGSWORD = ArsenalAPI.registerWeaponsAllTier(
-            tier -> register(tier.getUnlocalizedName() + "_longsword",
-                    () -> new LongswordItem(tier, new ItemStack(LONGSWORD_SCABBARD.get(tier).get())))
-    );
-
-    public static final DeferredHolder<Item, Item> XUANYUANJIAN_SHEATH = register("xuanyuanjian_sheath", () -> new SwordSheathItem(true));
-    public static final DeferredHolder<Item, ChineseSwordItem> XUANYUANJIAN = register("xuanyuanjian", XuanyuanjianItem::new);
-
-    private static <V extends Item> DeferredHolder<Item, V> register(String name, Supplier<V> item) {
-        return ITEMS.register(name, item);
+    private static Map<WeaponToolMaterial, DeferredHolder<Item, Item>> registerSheaths(String suffix) {
+        return ArsenalAPI.registerWeaponsAllToolMaterial(tier ->
+                registerItem(tier.getUnlocalizedName() + suffix,
+                        (props, id) -> new SwordSheathItem(props.stacksTo(1).fireResistant())));
     }
 
+    private static Map<WeaponToolMaterial, DeferredHolder<Item, Item>> registerWeapon(
+            String suffix,
+            int attackDamage,
+            float attackSpeed,
+            Map<WeaponToolMaterial, DeferredHolder<Item, Item>> sheathMap,
+            TriFunction<WeaponToolMaterial, ItemStack, Item.Properties, ? extends Item> weaponFactory) {
+
+        return ArsenalAPI.registerWeaponsAllToolMaterial(tier -> registerItem(tier.getUnlocalizedName() + suffix,
+                (props, id) -> {
+                    ItemStack sheathStack = new ItemStack(sheathMap.get(tier).get());
+                    return weaponFactory.apply(tier, sheathStack, props);
+                }));
+    }
+
+
+    public static final DeferredHolder<Item, WeaponFrogItem> WEAPON_FROG =
+            registerItem("weapon_frog", (props, id) -> new WeaponFrogItem(props.stacksTo(1)));
+
+    public static final Map<WeaponToolMaterial, DeferredHolder<Item, Item>> CHINESE_SWORD_SHEATH = registerSheaths("_chinese_sword_sheath");
+    public static final Map<WeaponToolMaterial, DeferredHolder<Item, Item>> CHINESE_SWORD = registerWeapon(
+            "_chinese_sword", 4, -1.8F, CHINESE_SWORD_SHEATH,
+            (material, sheath, properties) -> new ChineseSwordItem(material, 4, -1.8F, sheath, properties.stacksTo(1))
+    );
+
+    public static final Map<WeaponToolMaterial, DeferredHolder<Item, Item>> ANCIENT_SWORD_SHEATH = registerSheaths("_ancient_sword_sheath");
+    public static final Map<WeaponToolMaterial, DeferredHolder<Item, Item>> ANCIENT_SWORD = registerWeapon(
+            "_ancient_sword", 0, 0, ANCIENT_SWORD_SHEATH,
+            AncientSwordItem::new
+    );
+
+    public static final Map<WeaponToolMaterial, DeferredHolder<Item, Item>> RAPIER_SCABBARD = registerSheaths("_rapier_scabbard");
+    public static final Map<WeaponToolMaterial, DeferredHolder<Item, Item>> RAPIER = registerWeapon(
+            "_rapier", 0, 0, RAPIER_SCABBARD,
+            RapierItem::new
+    );
+
+    public static final Map<WeaponToolMaterial, DeferredHolder<Item, Item>> SMALLSWORD_SCABBARD = registerSheaths("_smallsword_scabbard");
+    public static final Map<WeaponToolMaterial, DeferredHolder<Item, Item>> SMALLSWORD = registerWeapon(
+            "_smallsword", 0, 0, SMALLSWORD_SCABBARD,
+            SmallswordItem::new
+    );
+
+    public static final Map<WeaponToolMaterial, DeferredHolder<Item, Item>> ARMING_SWORD_SCABBARD = registerSheaths("_arming_sword_scabbard");
+    public static final Map<WeaponToolMaterial, DeferredHolder<Item, Item>> ARMING_SWORD = registerWeapon(
+            "_arming_sword", 4, -2.4F, ARMING_SWORD_SCABBARD,
+            (material, sheath, properties) -> new ArmingSwordItem(material, 4, -2.4F, sheath, properties.stacksTo(1))
+    );
+
+    public static final Map<WeaponToolMaterial, DeferredHolder<Item, Item>> LONGSWORD_SCABBARD = registerSheaths("_longsword_scabbard");
+    public static final Map<WeaponToolMaterial, DeferredHolder<Item, Item>> LONGSWORD = registerWeapon(
+            "_longsword", 0, 0, LONGSWORD_SCABBARD,
+            LongswordItem::new
+    );
+
+    public static final DeferredHolder<Item, Item> XUANYUANJIAN_SHEATH =
+            registerItem("xuanyuanjian_sheath",
+                    (props, id) -> new SwordSheathItem(true, props));
+    public static final DeferredHolder<Item, ChineseSwordItem> XUANYUANJIAN =
+            registerItem("xuanyuanjian",
+                    (props, id) -> new XuanyuanjianItem(props));
+
+    public static <T extends Item> DeferredHolder<Item, T> registerItem(String name, BiFunction<Item.Properties, ResourceLocation, T> factory) {
+        return ITEMS.register(name, key -> {
+            Item.Properties props = new Item.Properties();
+            props.setId(ResourceKey.create(Registries.ITEM, key));
+            return factory.apply(props, key);
+        });
+    }
 }
+

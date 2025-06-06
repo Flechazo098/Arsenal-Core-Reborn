@@ -6,18 +6,10 @@
         "PS "
     ],
     "key": {
-        "I": {
-            "tag": "c:cobblestones"
-        },
-        "L": {
-            "tag": "minecraft:logs"
-        },
-        "P": {
-            "tag": "minecraft:planks"
-        },
-        "S": {
-            "tag": "c:leathers"
-        }
+        "I": "#c:cobblestones",
+        "L": "#minecraft:logs",
+        "P": "#minecraft:planks",
+        "S": "#c:leathers"
     },
     "result": {
         "id": "arsenal_core:stone_smallsword_scabbard"

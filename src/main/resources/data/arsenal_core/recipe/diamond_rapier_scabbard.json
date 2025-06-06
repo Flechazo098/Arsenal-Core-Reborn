@@ -6,18 +6,10 @@
         "PS "
     ],
     "key": {
-        "I": {
-            "tag": "c:gems/diamond"
-        },
-        "L": {
-            "tag": "minecraft:logs"
-        },
-        "P": {
-            "tag": "minecraft:planks"
-        },
-        "S": {
-            "tag": "c:leathers"
-        }
+        "I": "#c:gems/diamond",
+        "L": "#minecraft:logs",
+        "P": "#minecraft:planks",
+        "S": "#c:leathers"
     },
     "result": {
         "id": "arsenal_core:diamond_rapier_scabbard"

@@ -5,12 +5,8 @@
         "B "
     ],
     "key": {
-        "B": {
-            "item": "minecraft:wooden_sword"
-        },
-        "S": {
-            "item": "arsenal_core:wooden_arming_sword_scabbard"
-        }
+        "B": "minecraft:wooden_sword",
+        "S": "arsenal_core:wooden_arming_sword_scabbard"
     },
     "result": {
         "id": "arsenal_core:wooden_arming_sword"

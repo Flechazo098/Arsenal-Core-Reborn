@@ -2,7 +2,7 @@ package cn.mcmod.arsenal.item.chinese;
 
 import cn.mcmod.arsenal.ArsenalConfig;
 import cn.mcmod.arsenal.item.ItemRegistry;
-import cn.mcmod.arsenal.tier.VanillaWeaponTiers;
+import cn.mcmod.arsenal.tier.VanillaWeaponToolMaterials;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -11,8 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
 public class XuanyuanjianItem extends ChineseSwordItem {
-    public XuanyuanjianItem() {
-        super(VanillaWeaponTiers.MAXIMUM_POWER.get(), 5, -1.8F, new ItemStack(ItemRegistry.XUANYUANJIAN_SHEATH.get()));
+    public XuanyuanjianItem(Item.Properties properties) {
+        super(VanillaWeaponToolMaterials.MAXIMUM_POWER.get(), 5, -1.8F, new ItemStack(ItemRegistry.XUANYUANJIAN_SHEATH.get()), properties.stacksTo(1));
     }
 
     @Override
@@ -20,8 +20,9 @@ public class XuanyuanjianItem extends ChineseSwordItem {
         return false;
     }
 
+
     @Override
-    public boolean isRepairable(ItemStack stack) {
+    public boolean isCombineRepairable (ItemStack stack) {
         return false;
     }
 

@@ -13,8 +13,8 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
 public class WeaponFrogItem extends Item {
-    public WeaponFrogItem() {
-        super(new Properties().stacksTo(1));
+    public WeaponFrogItem(Properties properties) {
+        super(properties);
     }
 
     public static void initAttachments(ItemStack stack, Level level) {

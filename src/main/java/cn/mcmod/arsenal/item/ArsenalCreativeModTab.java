@@ -1,17 +1,13 @@
 package cn.mcmod.arsenal.item;
 
 import cn.mcmod.arsenal.ArsenalCore;
-import cn.mcmod.arsenal.tier.VanillaWeaponTiers;
-import net.minecraft.core.registries.BuiltInRegistries;
+import cn.mcmod.arsenal.tier.VanillaWeaponToolMaterials;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
-
-import java.util.function.Supplier;
 
 public class ArsenalCreativeModTab {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
@@ -21,7 +17,7 @@ public class ArsenalCreativeModTab {
             "arsenal_core_tab",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.arsenal_core"))
-                    .icon(() -> new ItemStack(ItemRegistry.ANCIENT_SWORD.get(VanillaWeaponTiers.IRON.get()).get()))
+                    .icon(() -> new ItemStack(ItemRegistry.ANCIENT_SWORD.get(VanillaWeaponToolMaterials.IRON.get()).get()))
                     .displayItems((parameters, output) -> {
 //                        output.accept(ItemRegistry.XUANYUANJIAN.get());
 //                        output.accept(ItemRegistry.XUANYUANJIAN_SHEATH.get());

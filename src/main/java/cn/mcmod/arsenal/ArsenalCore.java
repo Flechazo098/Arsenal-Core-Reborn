@@ -5,7 +5,7 @@ import cn.mcmod.arsenal.compat.curios.CuriosCapProvider;
 import cn.mcmod.arsenal.data.ComponentRegistry;
 import cn.mcmod.arsenal.item.ArsenalCreativeModTab;
 import cn.mcmod.arsenal.item.ItemRegistry;
-import cn.mcmod.arsenal.tier.VanillaWeaponTiers;
+import cn.mcmod.arsenal.tier.VanillaWeaponToolMaterials;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
@@ -36,13 +36,13 @@ public class ArsenalCore {
 
     private void registerVanillaTiers() {
         WeaponTierRegistry.registerAll(
-                VanillaWeaponTiers.WOOD.get(),
-                VanillaWeaponTiers.STONE.get(),
-                VanillaWeaponTiers.IRON.get(),
-                VanillaWeaponTiers.GOLD.get(),
-                VanillaWeaponTiers.DIAMOND.get(),
-                VanillaWeaponTiers.NETHERITE.get(),
-                VanillaWeaponTiers.MAXIMUM_POWER.get());
+                VanillaWeaponToolMaterials.WOOD.get(),
+                VanillaWeaponToolMaterials.STONE.get(),
+                VanillaWeaponToolMaterials.IRON.get(),
+                VanillaWeaponToolMaterials.GOLD.get(),
+                VanillaWeaponToolMaterials.DIAMOND.get(),
+                VanillaWeaponToolMaterials.NETHERITE.get(),
+                VanillaWeaponToolMaterials.MAXIMUM_POWER.get());
     }
 
 

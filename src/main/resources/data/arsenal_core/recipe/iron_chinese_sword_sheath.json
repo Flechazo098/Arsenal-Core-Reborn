@@ -6,18 +6,10 @@
         "PS "
     ],
     "key": {
-        "I": {
-            "tag": "c:ingots/iron"
-        },
-        "L": {
-            "tag": "minecraft:logs"
-        },
-        "P": {
-            "tag": "minecraft:planks"
-        },
-        "S": {
-            "tag": "c:strings"
-        }
+        "I": "#c:ingots/iron",
+        "L": "#minecraft:logs",
+        "P": "#minecraft:planks",
+        "S": "#c:strings"
     },
     "result": {
         "id": "arsenal_core:iron_chinese_sword_sheath"

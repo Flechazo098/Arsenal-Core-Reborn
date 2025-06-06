@@ -2,8 +2,8 @@ package cn.mcmod.arsenal.item.rapier;
 
 import cn.mcmod.arsenal.api.IDrawable;
 import cn.mcmod.arsenal.api.WeaponFeature;
-import cn.mcmod.arsenal.api.tier.IWeaponTiered;
-import cn.mcmod.arsenal.api.tier.WeaponTier;
+import cn.mcmod.arsenal.api.tier.IWeaponToolMaterial;
+import cn.mcmod.arsenal.api.tier.WeaponToolMaterial;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -11,21 +11,16 @@ import cn.mcmod.arsenal.util.EnchantmentUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -36,38 +31,23 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.neoforged.neoforge.common.ItemAbilities;
-import net.neoforged.neoforge.common.extensions.IItemStackExtension;
 
-public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
-    private final WeaponTier tier;
+public class RapierItem extends Item implements IDrawable, IWeaponToolMaterial {
+    private final WeaponToolMaterial toolMaterial;
     private ItemStack sheath;
     private final float attackDamage;
-    private final ItemAttributeModifiers defaultModifiers;
 
-    public RapierItem(WeaponTier tier, int attackDamageIn, float attackSpeedIn, ItemStack sheathItem, Properties prop) {
-        super(tier, prop);
-        this.tier = tier;
+    public RapierItem(WeaponToolMaterial toolMaterial, int attackDamageIn, float attackSpeedIn, ItemStack sheathItem, Item.Properties prop) {
+        super(toolMaterial.getToolMaterial().applySwordProperties(prop, attackDamageIn, attackSpeedIn));
+        this.toolMaterial = toolMaterial;
         this.sheath = sheathItem;
-        this.attackDamage = Math.max((float) attackDamageIn + tier.getAttackDamageBonus(), tier.getAttackDamageBonus());
-
-        ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
-
-        AttributeModifier damageModifier = new AttributeModifier(BASE_ATTACK_DAMAGE_ID, this.attackDamage, Operation.ADD_VALUE);
-        AttributeModifier speedModifier = new AttributeModifier(BASE_ATTACK_SPEED_ID, attackSpeedIn, Operation.ADD_VALUE);
-
-        builder.add(Attributes.ATTACK_DAMAGE, damageModifier, EquipmentSlotGroup.bySlot(EquipmentSlot.MAINHAND));
-        builder.add(Attributes.ATTACK_SPEED, speedModifier, EquipmentSlotGroup.bySlot(EquipmentSlot.MAINHAND));
-
-        this.defaultModifiers = builder.build();
+        this.attackDamage = Math.max((float) attackDamageIn + toolMaterial.getAttackDamageBonus(), toolMaterial.getAttackDamageBonus());
     }
 
-    public RapierItem(WeaponTier tier, ItemStack sheathItem, Properties prop) {
-        this(tier, 2, -1.25F, sheathItem, prop);
+    public RapierItem(WeaponToolMaterial toolMaterial, ItemStack sheathItem, Item.Properties prop) {
+        this(toolMaterial, 2, -1.25F, sheathItem, prop);
     }
 
-    public RapierItem(WeaponTier tier, ItemStack sheathItem) {
-        this(tier, 2, -1.25F, sheathItem, (new Properties()).stacksTo(1));
-    }
 
     public float getDamage() {
         return this.attackDamage;
@@ -77,15 +57,17 @@ public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
         return this.sheath;
     }
 
-    public WeaponTier getWeaponTier(ItemStack stack) {
-        return this.tier;
-    }
     public int getMaxDamage(ItemStack stack) {
-        return (int)((float)this.getWeaponTier(stack).getUses() * 0.85F);
+        return (int)((float)this.getWeaponToolMaterial(stack).getDurability() * 0.85F);
+    }
+
+    @Override
+    public WeaponToolMaterial getWeaponToolMaterial (ItemStack var1) {
+        return toolMaterial;
     }
 
     public WeaponFeature getFeature(ItemStack stack) {
-        return this.getWeaponTier(stack).getFeature();
+        return this.getWeaponToolMaterial(stack).getFeature();
     }
 
     // Creative mode allows enchanting Sweeping Edge on an anvil.（But why even do this?）
@@ -113,8 +95,8 @@ public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
 
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand handIn) {
-        ItemStack itemStackIn = player.getItemInHand(handIn);
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
+        ItemStack itemStack = player.getItemInHand(hand);
         player.causeFoodExhaustion(0.2F);
 
         float[] push;
@@ -126,18 +108,19 @@ public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
             player.push(push[0], 0.1F, push[1]);
         }
 
-        player.getCooldowns().addCooldown(itemStackIn.getItem(), 5);
+        player.getCooldowns().addCooldown(itemStack, 5);
 
-        if (handIn == InteractionHand.MAIN_HAND) {
+        if (hand == InteractionHand.MAIN_HAND) {
             ItemStack offHand = player.getItemInHand(InteractionHand.OFF_HAND);
             if (offHand.getItem().canPerformAction(offHand, ItemAbilities.SHIELD_BLOCK)) {
                 player.startUsingItem(InteractionHand.OFF_HAND);
-                return InteractionResultHolder.consume(itemStackIn);
+                return InteractionResult.CONSUME.withoutItem();
             }
         }
 
-        return InteractionResultHolder.pass(itemStackIn);
+        return InteractionResult.PASS;
     }
+
 
     private static float[] calculatePushVector(Player player, float baseForce) {
         float radiansY = player.getYRot() / 180.0F * (float) Math.PI;
@@ -156,11 +139,11 @@ public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
     public void appendHoverText(ItemStack stackIn, Item.TooltipContext pContext, List<Component> tooltipIn, TooltipFlag flagIn) {
         super.appendHoverText(stackIn, pContext, tooltipIn, flagIn);
         Component tierText = Component.translatable("tooltip.arsenal.tiers")
-                .append(Component.translatable("tier.arsenal." + this.getWeaponTier(stackIn).getUnlocalizedName()));
+                .append(Component.translatable("tier.arsenal." + this.getWeaponToolMaterial(stackIn).getUnlocalizedName()));
         tooltipIn.add(tierText);
 
         if (this.getFeature(stackIn) != null) {
-            tooltipIn.add(Component.translatable("tooltip.arsenal.feature." + this.getWeaponTier(stackIn).getFeature().getName())
+            tooltipIn.add(Component.translatable("tooltip.arsenal.feature." + this.getWeaponToolMaterial(stackIn).getFeature().getName())
                     .withStyle(ChatFormatting.GOLD));
         }
     }
@@ -254,13 +237,29 @@ public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
 
     @Override
     public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
-        return this.defaultModifiers;
+        // 获取ToolMaterial提供的基础属性
+        ItemAttributeModifiers baseModifiers = super.getDefaultAttributeModifiers(stack);
+
+        // 如果基础属性已经足够，直接返回
+        if (!baseModifiers.modifiers().isEmpty()) {
+            return baseModifiers;
+        }
+
+        // 否则手动构建
+        ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
+
+        // 正确的forEach用法
+        baseModifiers.forEach(EquipmentSlot.MAINHAND, (attribute, modifier) -> {
+            builder.add(attribute, modifier, EquipmentSlotGroup.bySlot(EquipmentSlot.MAINHAND));
+        });
+
+        return builder.build();
     }
 
 
     public void doStingAttack(ItemStack stack, LivingEntity attacker, LivingEntity target) {
-        if (stack.getItem() instanceof TieredItem rapier) {
-            float attackDamageBonus = rapier.getTier().getAttackDamageBonus();
+        if (stack.getItem() instanceof RapierItem  rapier) {
+            float attackDamageBonus = rapier.getWeaponToolMaterial(stack).getAttackDamageBonus();
 
             float enchantDamageBonus = 0.0f;
             if (attacker.level() instanceof ServerLevel serverLevel) {
@@ -275,27 +274,36 @@ public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
 
     public static void doStingAttack(ItemStack stack, float baseDamage, float exDamage, LivingEntity attacker, LivingEntity target) {
         if (!target.getItemBySlot(EquipmentSlot.CHEST).isEmpty()) {
-            boolean isPlayer = attacker instanceof Player ;
+            boolean isPlayer = attacker instanceof Player;
             float f = baseDamage;
             float f1 = exDamage;
+
             if (isPlayer) {
-                float f2 = ((Player)attacker).getAttackStrengthScale(0.5F);
+                float f2 = ((Player) attacker).getAttackStrengthScale(0.5F);
                 f = baseDamage * (0.2F + f2 * f2 * 0.8F);
                 f1 = exDamage * f2;
             }
 
             f += f1;
+
             DamageSources sources = attacker.level().damageSources();
             DamageSource ds = isPlayer
-                    ? sources.playerAttack((Player)attacker)
+                    ? sources.playerAttack((Player) attacker)
                     : sources.mobAttack(attacker);
 
-            boolean hurt = target.hurt(ds, f);
+            boolean hurt;
+            if (target.level() instanceof ServerLevel serverLevel) {
+                hurt = target.hurtServer(serverLevel, ds, f);
 
-            if (hurt) {
-                target.invulnerableTime = 0;
-                target.level().playSound(null, target, SoundEvents.PLAYER_ATTACK_CRIT, target.getSoundSource(), Math.max(1.0F, f), (target.getRandom().nextFloat() - target.getRandom().nextFloat()) * 0.5F + 1.0F);
+                if (hurt) {
+                    target.invulnerableTime = 0;
+                    target.level().playSound(null, target, SoundEvents.PLAYER_ATTACK_CRIT, target.getSoundSource(),
+                            Math.max(1.0F, f),
+                            (target.getRandom().nextFloat() - target.getRandom().nextFloat()) * 0.5F + 1.0F
+                    );
+                }
             }
         }
     }
+
 }

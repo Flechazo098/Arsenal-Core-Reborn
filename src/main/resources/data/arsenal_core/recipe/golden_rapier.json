@@ -5,12 +5,8 @@
         "B "
     ],
     "key": {
-        "B": {
-            "item": "minecraft:golden_sword"
-        },
-        "S": {
-            "item": "arsenal_core:golden_rapier_scabbard"
-        }
+        "B": "minecraft:golden_sword",
+        "S": "arsenal_core:golden_rapier_scabbard"
     },
     "result": {
         "id": "arsenal_core:golden_rapier"

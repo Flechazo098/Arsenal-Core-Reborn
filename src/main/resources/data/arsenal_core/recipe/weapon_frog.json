@@ -6,12 +6,8 @@
         " I "
     ],
     "key": {
-        "I": {
-            "tag": "c:leathers"
-        },
-        "L": {
-            "tag": "c:rods/wooden"
-        }
+        "I": "#c:leathers",
+        "L": "#c:rods/wooden"
     },
     "result": {
         "id": "arsenal_core:weapon_frog"
