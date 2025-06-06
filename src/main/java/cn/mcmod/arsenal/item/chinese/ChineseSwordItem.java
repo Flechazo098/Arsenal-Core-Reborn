@@ -11,7 +11,6 @@ import cn.mcmod.arsenal.api.WeaponFeature;
 import cn.mcmod.arsenal.api.tier.IWeaponTiered;
 import cn.mcmod.arsenal.api.tier.WeaponTier;
 import java.util.List;
-import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -22,7 +21,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.ToolAction;
 import net.neoforged.neoforge.common.ToolActions;
@@ -34,7 +32,7 @@ public class ChineseSwordItem extends SwordItem implements IDrawable, IWeaponTie
     private final float attackSpeed;
 
     public ChineseSwordItem(WeaponTier tier, int attackDamageIn, float attackSpeedIn, ItemStack sheathItem, Properties builderIn) {
-        super(tier, builderIn.component(DataComponents.TOOL, createToolProperties(attackDamageIn, attackSpeedIn)));
+        super(tier, builderIn.component(DataComponents.TOOL, createToolProperties()).attributes(createAttributes(tier, attackDamageIn, attackSpeedIn)));
         this.tier = tier;
         this.sheath = sheathItem;
         this.attackDamage = attackDamageIn;
@@ -51,10 +49,6 @@ public class ChineseSwordItem extends SwordItem implements IDrawable, IWeaponTie
 
     public ChineseSwordItem(WeaponTier tier, ItemStack sheathItem) {
         this(tier, 4, -1.8F, sheathItem, (new Properties()).stacksTo(1));
-    }
-
-    private static Tool createToolProperties(int attackDamage, float attackSpeed) {
-        return new Tool(List.of(), 1.0F, 2);
     }
 
     @Override

@@ -1,18 +1,8 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package cn.mcmod.arsenal.api.tier;
 
-import cn.mcmod.arsenal.ArsenalCore;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.util.Set;
-
-import net.minecraft.resources.ResourceLocation;
-
-import java.util.List;
 
 public class WeaponTierRegistry {
     private static final BiMap<String, WeaponTier> TIER_REG = HashBiMap.create();

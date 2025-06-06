@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package cn.mcmod.arsenal.item.knight;
 
 import cn.mcmod.arsenal.ArsenalConfig;
@@ -11,7 +6,6 @@ import cn.mcmod.arsenal.api.WeaponFeature;
 import cn.mcmod.arsenal.api.tier.IWeaponTiered;
 import cn.mcmod.arsenal.api.tier.WeaponTier;
 import java.util.List;
-import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -24,6 +18,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.Tool;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 
 public class ArmingSwordItem extends SwordItem implements IDrawable, IWeaponTiered {
@@ -33,7 +29,7 @@ public class ArmingSwordItem extends SwordItem implements IDrawable, IWeaponTier
     private final float attackSpeed;
 
     public ArmingSwordItem(WeaponTier tier, int attackDamageIn, float attackSpeedIn, ItemStack sheathItem, Properties builderIn) {
-        super(tier, builderIn.component(DataComponents.TOOL, createToolProperties(attackDamageIn, attackSpeedIn)));
+        super(tier, builderIn.component(DataComponents.TOOL, createToolProperties()).attributes(createAttributes(tier, attackDamageIn, attackSpeedIn)));
         this.tier = tier;
         this.sheath = sheathItem;
         this.attackDamage = attackDamageIn;
@@ -50,10 +46,6 @@ public class ArmingSwordItem extends SwordItem implements IDrawable, IWeaponTier
 
     public ArmingSwordItem(WeaponTier tier, ItemStack sheathItem) {
         this(tier, 4, -2.4F, sheathItem, (new Properties()).stacksTo(1));
-    }
-
-    private static Tool createToolProperties(int attackDamage, float attackSpeed) {
-        return new Tool(List.of(), 1.0F, 2);
     }
 
     @Override
@@ -75,8 +67,8 @@ public class ArmingSwordItem extends SwordItem implements IDrawable, IWeaponTier
     }
 
     @Override
-    public boolean isFoil(ItemStack p_77636_1_) {
-        return ArsenalConfig.normal_sword_foil && super.isFoil(p_77636_1_);
+    public boolean isFoil(ItemStack stack) {
+        return ArsenalConfig.normal_sword_foil && super.isFoil(stack);
     }
 
     @Override

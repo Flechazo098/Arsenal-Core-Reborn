@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package cn.mcmod.arsenal.item.rapier;
 
 import cn.mcmod.arsenal.api.IDrawable;
@@ -69,59 +64,73 @@ public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
         return this.attackDamage;
     }
 
+    @Override
     public ItemStack getSheath(ItemStack stack) {
         return this.sheath;
     }
 
+    @Override
     public WeaponTier getWeaponTier(ItemStack stack) {
         return this.tier;
     }
 
+    @Override
     public int getMaxDamage(ItemStack stack) {
         return (int)((float)this.getWeaponTier(stack).getUses() * 0.85F);
     }
 
+    @Override
     public WeaponFeature getFeature(ItemStack stack) {
         return this.getWeaponTier(stack).getFeature();
     }
 
+    @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        boolean isWeapon = stack.getItem() instanceof TieredItem;
-        boolean notSweepingEdge = enchantment != Enchantments.SWEEPING_EDGE;
-
-        if (isWeapon && notSweepingEdge) {
-            return true;
+        if (!stack.getItem().builtInRegistryHolder().is(enchantment.getSupportedItems())) {
+            return false;
         }
-        return super.canApplyAtEnchantingTable(stack, enchantment);
-    }
 
+        return enchantment != Enchantments.SWEEPING_EDGE;
+    }
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand handIn) {
         ItemStack itemStackIn = player.getItemInHand(handIn);
         player.causeFoodExhaustion(0.2F);
+
+        float[] push;
         if (!player.isInWater()) {
-            float f = 0.25F;
-            float motionX = Mth.sin(player.getYRot() / 180.0F * (float)Math.PI) * Mth.cos(player.getXRot() / 180.0F * (float)Math.PI) * f;
-            float motionZ = -Mth.sin(player.getYRot() / 180.0F * (float)Math.PI) * Mth.cos(player.getXRot() / 180.0F * (float)Math.PI) * f;
-            player.push(motionX, 0.2F, motionZ);
+            push = calculatePushVector(player, 0.25F);
+            player.push(push[0], 0.2F, push[1]);
         } else {
-            float f = 0.5F;
-            float motionX = Mth.sin(player.getYRot() / 180.0F * (float)Math.PI) * Mth.cos(player.getXRot() / 180.0F * (float)Math.PI) * f;
-            float motionZ = -Mth.sin(player.getYRot() / 180.0F * (float)Math.PI) * Mth.cos(player.getXRot() / 180.0F * (float)Math.PI) * f;
-            player.push(motionX, 0.1F, motionZ);
+            push = calculatePushVector(player, 0.5F);
+            player.push(push[0], 0.1F, push[1]);
         }
 
         player.getCooldowns().addCooldown(itemStackIn.getItem(), 5);
+
         if (handIn == InteractionHand.MAIN_HAND) {
-            ItemStack off_hand = player.getItemInHand(InteractionHand.OFF_HAND);
-            if (off_hand.getItem().canPerformAction(itemStackIn, ToolActions.SHIELD_BLOCK)) {
+            ItemStack offHand = player.getItemInHand(InteractionHand.OFF_HAND);
+            if (offHand.getItem().canPerformAction(offHand, ToolActions.SHIELD_BLOCK)) {
                 player.startUsingItem(InteractionHand.OFF_HAND);
                 return InteractionResultHolder.consume(itemStackIn);
             }
         }
 
         return InteractionResultHolder.pass(itemStackIn);
+    }
+
+    private static float[] calculatePushVector(Player player, float baseForce) {
+        float radiansY = player.getYRot() / 180.0F * (float) Math.PI;
+        float radiansX = player.getXRot() / 180.0F * (float) Math.PI;
+
+        float sinYaw = Mth.sin(radiansY);
+        float cosPitch = Mth.cos(radiansX);
+
+        float motionX = sinYaw * cosPitch * baseForce;
+        float motionZ = -sinYaw * cosPitch * baseForce;
+
+        return new float[]{motionX, motionZ};
     }
 
     @Override
