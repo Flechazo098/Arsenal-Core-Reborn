@@ -12,6 +12,7 @@ import cn.mcmod.arsenal.api.tier.IWeaponTiered;
 import cn.mcmod.arsenal.api.tier.WeaponTier;
 import java.util.List;
 import java.util.function.Consumer;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -24,8 +25,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.ToolAction;
-import net.neoforged.neoforge.common.ToolActions;
+import net.neoforged.neoforge.common.ItemAbilities;
+import net.neoforged.neoforge.common.ItemAbility;
 
 public class ChineseSwordItem extends SwordItem implements IDrawable, IWeaponTiered {
     private final WeaponTier tier;
@@ -105,7 +106,7 @@ public class ChineseSwordItem extends SwordItem implements IDrawable, IWeaponTie
     }
 
     @Override
-    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Runnable onBroken) {
+    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<Item> onBroken) {
         if (this.getFeature(stack) != null) {
             int feature_damage = this.getFeature(stack).damageItem(stack, amount, entity, onBroken);
             return super.damageItem(stack, amount, entity, onBroken) + feature_damage;
@@ -145,12 +146,12 @@ public class ChineseSwordItem extends SwordItem implements IDrawable, IWeaponTie
     }
 
     @Override
-    public int getUseDuration(ItemStack stackIn) {
+    public int getUseDuration (ItemStack stack, LivingEntity entity) {
         return 72000;
     }
 
     @Override
-    public boolean canPerformAction(ItemStack stack, ToolAction toolAction) {
-        return ToolActions.DEFAULT_SHIELD_ACTIONS.contains(toolAction);
+    public boolean canPerformAction(ItemStack stack, ItemAbility toolAction) {
+        return ItemAbilities.DEFAULT_SHIELD_ACTIONS.contains(toolAction);
     }
 }

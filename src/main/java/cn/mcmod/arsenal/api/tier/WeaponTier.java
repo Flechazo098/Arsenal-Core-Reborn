@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package cn.mcmod.arsenal.api.tier;
 
 import cn.mcmod.arsenal.ArsenalCore;
@@ -62,7 +57,7 @@ public class WeaponTier implements Tier {
 
     @Override
     public TagKey<Block> getIncorrectBlocksForDrops() {
-        return BlockTags.create(new ResourceLocation("c:ineffective_tool"));
+        return BlockTags.create(ResourceLocation.parse("c:ineffective_tool"));
     }
     @Override
     public int getEnchantmentValue() {

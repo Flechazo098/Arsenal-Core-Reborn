@@ -9,6 +9,7 @@ import cn.mcmod.arsenal.item.WeaponFrogItem;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
@@ -29,11 +30,11 @@ import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 
 public record DrawSwordPacket(String message) implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<DrawSwordPacket> TYPE =
-            new CustomPacketPayload.Type<>(new ResourceLocation(ArsenalCore.MODID, "draw_sword"));
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(ArsenalCore.MODID, "draw_sword"));
 
     public static final StreamCodec<FriendlyByteBuf, DrawSwordPacket> STREAM_CODEC =
             StreamCodec.composite(
-                    net.minecraft.network.codec.ByteBufCodecs.STRING_UTF8,
+                    ByteBufCodecs.STRING_UTF8,
                     DrawSwordPacket::message,
                     DrawSwordPacket::new
             );

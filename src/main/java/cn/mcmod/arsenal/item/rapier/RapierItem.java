@@ -10,6 +10,8 @@ import cn.mcmod.arsenal.api.WeaponFeature;
 import cn.mcmod.arsenal.api.tier.IWeaponTiered;
 import cn.mcmod.arsenal.api.tier.WeaponTier;
 import java.util.List;
+import java.util.function.Consumer;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -35,9 +37,9 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.ToolActions;
 
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.neoforged.neoforge.common.ItemAbilities;
 
 public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
     private final WeaponTier tier;
@@ -115,7 +117,7 @@ public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
         player.getCooldowns().addCooldown(itemStackIn.getItem(), 5);
         if (handIn == InteractionHand.MAIN_HAND) {
             ItemStack off_hand = player.getItemInHand(InteractionHand.OFF_HAND);
-            if (off_hand.getItem().canPerformAction(itemStackIn, ToolActions.SHIELD_BLOCK)) {
+            if (off_hand.getItem().canPerformAction(itemStackIn, ItemAbilities.SHIELD_BLOCK)) {
                 player.startUsingItem(InteractionHand.OFF_HAND);
                 return InteractionResultHolder.consume(itemStackIn);
             }
@@ -164,7 +166,7 @@ public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
     }
 
     @Override
-    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Runnable onBroken) {
+    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<Item> onBroken) {
         if (this.getFeature(stack) != null) {
             int feature_damage = this.getFeature(stack).damageItem(stack, amount, entity, onBroken);
             return super.damageItem(stack, amount, entity, onBroken) + feature_damage;

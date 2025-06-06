@@ -1,6 +1,8 @@
 package cn.mcmod.arsenal.api.tier;
 
 import java.util.function.Supplier;
+
+import cn.mcmod.arsenal.ArsenalCore;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Tier;
@@ -16,7 +18,7 @@ public class BlankTier extends WeaponTier {
     }
 
     public BlankTier(String unlocName, int maxUses, float efficiency, float baseDamage, int enchantability, ResourceLocation tagName) {
-        this(unlocName, "arsenal_core", maxUses, efficiency, baseDamage, enchantability, (() -> Ingredient.of(ItemTags.create(tagName))));
+        this(unlocName, ArsenalCore.MODID, maxUses, efficiency, baseDamage, enchantability, (() -> Ingredient.of(ItemTags.create(tagName))));
     }
 
     public BlankTier(String unlocName, String modId, Tier itemTier, ResourceLocation tagName) {
@@ -24,11 +26,11 @@ public class BlankTier extends WeaponTier {
     }
 
     public BlankTier(String unlocName, Tier itemTier, ResourceLocation tagName) {
-        this(unlocName, "arsenal_core", itemTier, tagName);
+        this(unlocName, ArsenalCore.MODID, itemTier, tagName);
     }
 
     public BlankTier(String unlocName, int maxUses, float efficiency, float baseDamage, int enchantability, Supplier<Ingredient> repairMaterial) {
-        this(unlocName, "arsenal_core", maxUses, efficiency, baseDamage, enchantability, repairMaterial);
+        this(unlocName, ArsenalCore.MODID, maxUses, efficiency, baseDamage, enchantability, repairMaterial);
     }
 
     public BlankTier(String unlocName, String modId, Tier itemTier, Supplier<Ingredient> repairMaterial) {
@@ -36,6 +38,6 @@ public class BlankTier extends WeaponTier {
     }
 
     public BlankTier(String unlocName, Tier itemTier, Supplier<Ingredient> repairMaterial) {
-        this(unlocName, "arsenal_core", itemTier, repairMaterial);
+        this(unlocName, ArsenalCore.MODID, itemTier, repairMaterial);
     }
 }

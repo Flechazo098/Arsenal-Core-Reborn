@@ -113,7 +113,7 @@ public class ArmingSwordItem extends SwordItem implements IDrawable, IWeaponTier
     }
 
     @Override
-    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Runnable onBroken) {
+    public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, T entity, Consumer<Item> onBroken) {
         if (this.getFeature(stack) != null) {
             int feature_damage = this.getFeature(stack).damageItem(stack, amount, entity, onBroken);
             return super.damageItem(stack, amount, entity, onBroken) + feature_damage;

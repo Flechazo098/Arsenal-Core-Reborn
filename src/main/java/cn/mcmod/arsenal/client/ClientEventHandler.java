@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package cn.mcmod.arsenal.client;
 
 import cn.mcmod.arsenal.ArsenalCore;
@@ -44,7 +39,7 @@ public class ClientEventHandler {
 
     private static void registerBlockingProperties(DeferredHolder<Item,? extends Item> item) {
         if (item.get() instanceof AncientSwordItem || item.get() instanceof ChineseSwordItem) {
-            ItemProperties.register(item.get(), new ResourceLocation("blocking"), (stack, level, entity, seed) ->
+            ItemProperties.register(item.get(), ResourceLocation.parse("blocking"), (stack, level, entity, seed) ->
                     entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
         }
     }
