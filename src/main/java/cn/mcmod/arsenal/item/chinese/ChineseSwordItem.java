@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package cn.mcmod.arsenal.item.chinese;
 
 import cn.mcmod.arsenal.ArsenalConfig;
@@ -23,7 +18,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.ItemAbility;
@@ -35,7 +29,7 @@ public class ChineseSwordItem extends SwordItem implements IDrawable, IWeaponTie
     private final float attackSpeed;
 
     public ChineseSwordItem(WeaponTier tier, int attackDamageIn, float attackSpeedIn, ItemStack sheathItem, Properties builderIn) {
-        super(tier, builderIn.component(DataComponents.TOOL, createToolProperties(attackDamageIn, attackSpeedIn)));
+        super(tier, builderIn.component(DataComponents.TOOL, createToolProperties()).attributes(createAttributes(tier, attackDamageIn, attackSpeedIn)));
         this.tier = tier;
         this.sheath = sheathItem;
         this.attackDamage = attackDamageIn;
@@ -54,9 +48,6 @@ public class ChineseSwordItem extends SwordItem implements IDrawable, IWeaponTie
         this(tier, 4, -1.8F, sheathItem, (new Properties()).stacksTo(1));
     }
 
-    private static Tool createToolProperties(int attackDamage, float attackSpeed) {
-        return new Tool(List.of(), 1.0F, 2);
-    }
 
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext pContext, List<Component> tooltip, TooltipFlag flag) {
@@ -130,7 +121,7 @@ public class ChineseSwordItem extends SwordItem implements IDrawable, IWeaponTie
         ItemStack itemstack = playerIn.getItemInHand(handIn);
         if (handIn == InteractionHand.MAIN_HAND) {
             ItemStack off_hand = playerIn.getItemInHand(InteractionHand.OFF_HAND);
-            if (off_hand.getItem().canPerformAction(itemstack, ToolActions.SHIELD_BLOCK)) {
+            if (off_hand.getItem().canPerformAction(itemstack, ItemAbilities.SHIELD_BLOCK)) {
                 playerIn.startUsingItem(InteractionHand.OFF_HAND);
                 return InteractionResultHolder.consume(itemstack);
             }

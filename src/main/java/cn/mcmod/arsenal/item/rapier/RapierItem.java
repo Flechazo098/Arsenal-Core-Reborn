@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package cn.mcmod.arsenal.item.rapier;
 
 import cn.mcmod.arsenal.api.IDrawable;
@@ -12,9 +7,14 @@ import cn.mcmod.arsenal.api.tier.WeaponTier;
 import java.util.List;
 import java.util.function.Consumer;
 
+import cn.mcmod.arsenal.util.EnchantmentUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
@@ -27,12 +27,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TieredItem;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -40,6 +36,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.neoforged.neoforge.common.ItemAbilities;
+import net.neoforged.neoforge.common.extensions.IItemStackExtension;
 
 public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
     private final WeaponTier tier;
@@ -51,11 +48,16 @@ public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
         super(tier, prop);
         this.tier = tier;
         this.sheath = sheathItem;
-        this.attackDamage = Math.max((float)attackDamageIn + tier.getAttackDamageBonus(), tier.getAttackDamageBonus());
-        
+        this.attackDamage = Math.max((float) attackDamageIn + tier.getAttackDamageBonus(), tier.getAttackDamageBonus());
+
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
-        builder.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", this.attackDamage, Operation.ADD_VALUE), EquipmentSlotGroup.bySlot(EquipmentSlot.MAINHAND));
-        builder.add(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", attackSpeedIn, Operation.ADD_VALUE), EquipmentSlotGroup.bySlot(EquipmentSlot.MAINHAND));
+
+        AttributeModifier damageModifier = new AttributeModifier(BASE_ATTACK_DAMAGE_ID, this.attackDamage, Operation.ADD_VALUE);
+        AttributeModifier speedModifier = new AttributeModifier(BASE_ATTACK_SPEED_ID, attackSpeedIn, Operation.ADD_VALUE);
+
+        builder.add(Attributes.ATTACK_DAMAGE, damageModifier, EquipmentSlotGroup.bySlot(EquipmentSlot.MAINHAND));
+        builder.add(Attributes.ATTACK_SPEED, speedModifier, EquipmentSlotGroup.bySlot(EquipmentSlot.MAINHAND));
+
         this.defaultModifiers = builder.build();
     }
 
@@ -78,7 +80,6 @@ public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
     public WeaponTier getWeaponTier(ItemStack stack) {
         return this.tier;
     }
-
     public int getMaxDamage(ItemStack stack) {
         return (int)((float)this.getWeaponTier(stack).getUses() * 0.85F);
     }
@@ -87,43 +88,68 @@ public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
         return this.getWeaponTier(stack).getFeature();
     }
 
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-        boolean isWeapon = stack.getItem() instanceof TieredItem;
-        boolean notSweepingEdge = enchantment != Enchantments.SWEEPING_EDGE;
+    // Creative mode allows enchanting Sweeping Edge on an anvil.（But why even do this?）
+    @Override
+    public boolean isPrimaryItemFor(ItemStack stack, Holder<Enchantment> enchantment) {
+        if (enchantment.is(Enchantments.SWEEPING_EDGE)) {
+            return false;
+        }
+        return super.isPrimaryItemFor(stack, enchantment);
+    }
 
-        if (isWeapon && notSweepingEdge) {
+    @Override
+    public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantmentHolder) {
+        if (enchantmentHolder.is(Enchantments.SWEEPING_EDGE)) {
+            return false;
+        }
+        if (stack.is(Items.ENCHANTED_BOOK)) {
             return true;
         }
-        return super.canApplyAtEnchantingTable(stack, enchantment);
+        return enchantmentHolder.value().isSupportedItem(stack);
     }
+
+
+
 
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand handIn) {
         ItemStack itemStackIn = player.getItemInHand(handIn);
         player.causeFoodExhaustion(0.2F);
+
+        float[] push;
         if (!player.isInWater()) {
-            float f = 0.25F;
-            float motionX = Mth.sin(player.getYRot() / 180.0F * (float)Math.PI) * Mth.cos(player.getXRot() / 180.0F * (float)Math.PI) * f;
-            float motionZ = -Mth.sin(player.getYRot() / 180.0F * (float)Math.PI) * Mth.cos(player.getXRot() / 180.0F * (float)Math.PI) * f;
-            player.push(motionX, 0.2F, motionZ);
+            push = calculatePushVector(player, 0.25F);
+            player.push(push[0], 0.2F, push[1]);
         } else {
-            float f = 0.5F;
-            float motionX = Mth.sin(player.getYRot() / 180.0F * (float)Math.PI) * Mth.cos(player.getXRot() / 180.0F * (float)Math.PI) * f;
-            float motionZ = -Mth.sin(player.getYRot() / 180.0F * (float)Math.PI) * Mth.cos(player.getXRot() / 180.0F * (float)Math.PI) * f;
-            player.push(motionX, 0.1F, motionZ);
+            push = calculatePushVector(player, 0.5F);
+            player.push(push[0], 0.1F, push[1]);
         }
 
         player.getCooldowns().addCooldown(itemStackIn.getItem(), 5);
+
         if (handIn == InteractionHand.MAIN_HAND) {
-            ItemStack off_hand = player.getItemInHand(InteractionHand.OFF_HAND);
-            if (off_hand.getItem().canPerformAction(itemStackIn, ItemAbilities.SHIELD_BLOCK)) {
+            ItemStack offHand = player.getItemInHand(InteractionHand.OFF_HAND);
+            if (offHand.getItem().canPerformAction(offHand, ItemAbilities.SHIELD_BLOCK)) {
                 player.startUsingItem(InteractionHand.OFF_HAND);
                 return InteractionResultHolder.consume(itemStackIn);
             }
         }
 
         return InteractionResultHolder.pass(itemStackIn);
+    }
+
+    private static float[] calculatePushVector(Player player, float baseForce) {
+        float radiansY = player.getYRot() / 180.0F * (float) Math.PI;
+        float radiansX = player.getXRot() / 180.0F * (float) Math.PI;
+
+        float sinYaw = Mth.sin(radiansY);
+        float cosPitch = Mth.cos(radiansX);
+
+        float motionX = sinYaw * cosPitch * baseForce;
+        float motionZ = -sinYaw * cosPitch * baseForce;
+
+        return new float[]{motionX, motionZ};
     }
 
     @Override
@@ -177,9 +203,14 @@ public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
 
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
-        if (attacker instanceof Player player) {
-            player.broadcastBreakEvent(EquipmentSlot.MAINHAND);
+        if (attacker.level() instanceof ServerLevel serverLevel) {
+            stack.hurtAndBreak(1, serverLevel, attacker, item -> {
+                if (attacker instanceof Player player) {
+                    player.onEquippedItemBroken(item, EquipmentSlot.MAINHAND);
+                }
+            });
+        } else {
+            stack.hurtAndBreak(1, attacker, EquipmentSlot.MAINHAND);
         }
         return true;
     }
@@ -191,7 +222,7 @@ public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
         if (!(entity instanceof LivingEntity target)) {
             return result;
         } else {
-            this.DoStingAttack(stack, player, target);
+            this.doStingAttack(stack, player, target);
             if (this.getFeature(stack) == null) {
                 return result;
             } else {
@@ -203,15 +234,18 @@ public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
     @Override
     public boolean mineBlock(ItemStack stack, Level level, BlockState blockstate, BlockPos blockpos, LivingEntity entityLiving) {
         if (blockstate.getDestroySpeed(level, blockpos) != 0.0F) {
-            stack.hurtAndBreak(2, entityLiving, EquipmentSlot.MAINHAND);
-            if (entityLiving instanceof Player player) {
-                player.broadcastBreakEvent(EquipmentSlot.MAINHAND);
+            if (level instanceof ServerLevel serverLevel) {
+                stack.hurtAndBreak(2, serverLevel, entityLiving, item -> {
+                    if (entityLiving instanceof Player player) {
+                        player.onEquippedItemBroken(item, EquipmentSlot.MAINHAND);
+                    }
+                });
+            } else {
+                stack.hurtAndBreak(2, entityLiving, EquipmentSlot.MAINHAND);
             }
         }
-
         return true;
     }
-
     @Override
     public boolean isCorrectToolForDrops(ItemStack stack, BlockState blockstate) {
         return blockstate.is(Blocks.COBWEB);
@@ -219,24 +253,27 @@ public class RapierItem extends TieredItem implements IDrawable, IWeaponTiered {
 
 
     @Override
-    public ItemAttributeModifiers getAttributeModifiers(ItemStack stack) {
+    public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
         return this.defaultModifiers;
     }
 
 
-    public void DoStingAttack(ItemStack stack, LivingEntity attacker, LivingEntity target) {
+    public void doStingAttack(ItemStack stack, LivingEntity attacker, LivingEntity target) {
         if (stack.getItem() instanceof TieredItem rapier) {
             float attackDamageBonus = rapier.getTier().getAttackDamageBonus();
 
-            EntityType<?> targetType = target.getType();
+            float enchantDamageBonus = 0.0f;
+            if (attacker.level() instanceof ServerLevel serverLevel) {
+                DamageSource damageSource = attacker.damageSources().mobAttack(attacker);
+                enchantDamageBonus = EnchantmentUtil.modifyDamage(serverLevel, stack, target, damageSource, 0.0f);
+            }
 
-            float enchantDamageBonus = EnchantmentHelper.getDamageBonus(stack, targetType);
-
-            DoStingAttack(stack, attackDamageBonus, enchantDamageBonus, attacker, target);
+            doStingAttack(stack, attackDamageBonus, enchantDamageBonus, attacker, target);
         }
     }
 
-    public static void DoStingAttack(ItemStack stack, float baseDamage, float exDamage, LivingEntity attacker, LivingEntity target) {
+
+    public static void doStingAttack(ItemStack stack, float baseDamage, float exDamage, LivingEntity attacker, LivingEntity target) {
         if (!target.getItemBySlot(EquipmentSlot.CHEST).isEmpty()) {
             boolean isPlayer = attacker instanceof Player ;
             float f = baseDamage;

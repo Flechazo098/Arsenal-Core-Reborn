@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package cn.mcmod.arsenal.item.knight;
 
 import cn.mcmod.arsenal.ArsenalConfig;
@@ -23,7 +18,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.level.Level;
 
 public class ArmingSwordItem extends SwordItem implements IDrawable, IWeaponTiered {
@@ -33,7 +27,7 @@ public class ArmingSwordItem extends SwordItem implements IDrawable, IWeaponTier
     private final float attackSpeed;
 
     public ArmingSwordItem(WeaponTier tier, int attackDamageIn, float attackSpeedIn, ItemStack sheathItem, Properties builderIn) {
-        super(tier, builderIn.component(DataComponents.TOOL, createToolProperties(attackDamageIn, attackSpeedIn)));
+        super(tier, builderIn.component(DataComponents.TOOL, createToolProperties()).attributes(createAttributes(tier, attackDamageIn, attackSpeedIn)));
         this.tier = tier;
         this.sheath = sheathItem;
         this.attackDamage = attackDamageIn;
@@ -52,9 +46,6 @@ public class ArmingSwordItem extends SwordItem implements IDrawable, IWeaponTier
         this(tier, 4, -2.4F, sheathItem, (new Properties()).stacksTo(1));
     }
 
-    private static Tool createToolProperties(int attackDamage, float attackSpeed) {
-        return new Tool(List.of(), 1.0F, 2);
-    }
 
     @Override
     public int getMaxDamage(ItemStack stack) {
@@ -75,8 +66,8 @@ public class ArmingSwordItem extends SwordItem implements IDrawable, IWeaponTier
     }
 
     @Override
-    public boolean isFoil(ItemStack p_77636_1_) {
-        return ArsenalConfig.normal_sword_foil && super.isFoil(p_77636_1_);
+    public boolean isFoil(ItemStack stack) {
+        return ArsenalConfig.normal_sword_foil && super.isFoil(stack);
     }
 
     @Override
