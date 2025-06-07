@@ -100,18 +100,4 @@ public class WeaponToolMaterial {
         this.isSpecial = true;
         return this;
     }
-
-    /**
-     * 应用剑属性到物品属性
-     */
-    public Item.Properties applySwordProperties(Item.Properties properties, float attackDamage, float attackSpeed) {
-        return this.toolMaterial.applySwordProperties(properties, attackDamage, attackSpeed);
-    }
-
-    /**
-     * 应用工具属性到物品属性
-     */
-    public Item.Properties applyToolProperties(Item.Properties properties, TagKey<Block> mineableBlocks, float attackDamage, float attackSpeed) {
-        return this.toolMaterial.applyToolProperties(properties, mineableBlocks, attackDamage, attackSpeed);
-    }
 }

@@ -42,6 +42,7 @@ public class ArsenalCore {
                 VanillaWeaponToolMaterials.GOLD.get(),
                 VanillaWeaponToolMaterials.DIAMOND.get(),
                 VanillaWeaponToolMaterials.NETHERITE.get(),
+//                VanillaWeaponToolMaterials.COPPER.get(),
                 VanillaWeaponToolMaterials.MAXIMUM_POWER.get());
     }
 

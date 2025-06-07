@@ -237,18 +237,14 @@ public class RapierItem extends Item implements IDrawable, IWeaponToolMaterial {
 
     @Override
     public ItemAttributeModifiers getDefaultAttributeModifiers(ItemStack stack) {
-        // 获取ToolMaterial提供的基础属性
         ItemAttributeModifiers baseModifiers = super.getDefaultAttributeModifiers(stack);
 
-        // 如果基础属性已经足够，直接返回
         if (!baseModifiers.modifiers().isEmpty()) {
             return baseModifiers;
         }
 
-        // 否则手动构建
         ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
 
-        // 正确的forEach用法
         baseModifiers.forEach(EquipmentSlot.MAINHAND, (attribute, modifier) -> {
             builder.add(attribute, modifier, EquipmentSlotGroup.bySlot(EquipmentSlot.MAINHAND));
         });
