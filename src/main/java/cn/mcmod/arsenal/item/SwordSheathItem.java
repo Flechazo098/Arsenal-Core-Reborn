@@ -18,6 +18,7 @@ public class SwordSheathItem extends Item {
         return this.isHidden;
     }
 
+
     public SwordSheathItem setHidden(boolean isHidden) {
         this.isHidden = isHidden;
         return this;

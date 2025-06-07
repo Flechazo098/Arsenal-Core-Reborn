@@ -27,5 +27,13 @@ public class NetPacketHandler {
                 .decoder(DrawSwordPacket::new)
                 .consumerMainThread(DrawSwordPacket::handler)
                 .add();
+
+        INSTANCE.registerMessage(
+                nextID(),
+                SheathSyncPacket.class,
+                SheathSyncPacket::encode,
+                SheathSyncPacket::decode,
+                SheathSyncPacket::handle
+        );
     }
 }

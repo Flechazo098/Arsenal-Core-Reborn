@@ -1,6 +1,7 @@
 package cn.mcmod.arsenal;
 
 import cn.mcmod.arsenal.api.tier.WeaponTierRegistry;
+import cn.mcmod.arsenal.compat.ultramarine.UltramarineCompat;
 import cn.mcmod.arsenal.item.ArsenalCreativeModTab;
 import cn.mcmod.arsenal.item.ItemRegistry;
 import cn.mcmod.arsenal.net.NetPacketHandler;
@@ -23,6 +24,7 @@ public class ArsenalCore {
 
     public ArsenalCore() {
         curiosLoaded = ModList.get().isLoaded("curios");
+        UltramarineCompat.registerUltramarineTiers();
         this.registerVanillaTiers();
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         ItemRegistry.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
@@ -38,8 +40,8 @@ public class ArsenalCore {
                 VanillaWeaponTiers.GOLD.get(),
                 VanillaWeaponTiers.DIAMOND.get(),
                 VanillaWeaponTiers.NETHERITE.get(),
-                VanillaWeaponTiers.MAXIMUM_POWER.get(),
-                VanillaWeaponTiers.BLUE_AND_WHITE_PORCELAIN.get());
+                VanillaWeaponTiers.MAXIMUM_POWER.get()
+        );
     }
 
     private void setup(FMLCommonSetupEvent event) {
