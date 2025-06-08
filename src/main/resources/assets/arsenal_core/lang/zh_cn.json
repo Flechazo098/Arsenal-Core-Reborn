@@ -105,5 +105,20 @@
    "tooltip.arsenal.xuanyuanjian.not_max" : "并没有发挥一丝力量……",
    
    "key.draw_sword" : "拔剑",
-   "key.category.arsenal" : "武库 - 核心"
+   "key.category.arsenal" : "武库 - 核心",
+
+
+   "arsenal.weapon.level.prefix": "觉醒等级: Lv.%s",
+   "arsenal.weapon.kills": "击杀数: %s",
+   "arsenal.weapon.next_stage": "下一阶段: %s/%s",
+   "arsenal.weapon.level.max": "已达到最高觉醒等级",
+   "arsenal.weapon.level.upgrade": "轩辕剑觉醒至 Lv.%s - %s",
+   "arsenal.weapon.level.0": "初始觉醒",
+   "arsenal.weapon.level.1": "剑气微启",
+   "arsenal.weapon.level.2": "力破山河",
+   "arsenal.weapon.level.3": "神剑觉醒",
+   "arsenal.weapon.level.4": "无双圣剑",
+   "arsenal.weapon.level.5": "轩辕真解",
+   "arsenal.weapon.skill.tianguangjianyu": "天光剑狱！",
+   "arsenal.weapon.skill.jianqibaofa": "剑气爆发！"
 }

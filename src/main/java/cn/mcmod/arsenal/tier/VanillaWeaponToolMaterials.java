@@ -1,8 +1,8 @@
 package cn.mcmod.arsenal.tier;
 
 import cn.mcmod.arsenal.ArsenalConfig;
-import cn.mcmod.arsenal.api.tier.BlankToolMaterial;
-import cn.mcmod.arsenal.api.tier.WeaponToolMaterial;
+import cn.mcmod.arsenal.api.toolmaterial.BlankToolMaterial;
+import cn.mcmod.arsenal.api.toolmaterial.WeaponToolMaterial;
 import cn.mcmod.arsenal.item.feature.XuanyuanFeature;
 import java.util.function.Supplier;
 

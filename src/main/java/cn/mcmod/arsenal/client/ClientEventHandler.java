@@ -19,7 +19,8 @@ public class ClientEventHandler {
         if (ArsenalCore.curiosLoaded) {
             registerCuriosRenderer();
         }
-        event.register(KeyDrawSword.KEY);
+        event.register(KeyDrawSword.DRAW_SWORD_KEY);
+        event.register(KeyDrawSword.XUANYUAN_KEY);
     }
     private static void registerCuriosRenderer() {
         CuriosRendererRegistry.register(ItemRegistry.WEAPON_FROG.get(), WeaponFrogRender::new);

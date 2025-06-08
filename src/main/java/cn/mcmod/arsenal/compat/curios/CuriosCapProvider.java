@@ -2,6 +2,7 @@ package cn.mcmod.arsenal.compat.curios;
 
 import cn.mcmod.arsenal.ArsenalCore;
 import cn.mcmod.arsenal.data.ComponentRegistry;
+import cn.mcmod.arsenal.data.ItemHandlerComponent;
 import cn.mcmod.arsenal.item.ItemRegistry;
 import cn.mcmod.arsenal.item.WeaponFrogItem;
 import net.minecraft.world.item.ItemStack;

@@ -3,6 +3,7 @@ package cn.mcmod.arsenal.item;
 import cn.mcmod.arsenal.ArsenalCore;
 import cn.mcmod.arsenal.data.ComponentRegistry;
 import cn.mcmod.arsenal.compat.curios.CuriosCapProvider;
+import cn.mcmod.arsenal.data.ItemHandlerComponent;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
@@ -23,9 +24,9 @@ public class WeaponFrogItem extends Item {
             if (level != null) {
                 HolderLookup.Provider registries = level.registryAccess();
                 CompoundTag nbt = handler.serializeNBT(registries);
-                stack.set(ComponentRegistry.ITEM_HANDLER_COMPONENT.get(), new ComponentRegistry.ItemHandlerData(nbt));
+                stack.set(ComponentRegistry.ITEM_HANDLER_COMPONENT.get(), new ItemHandlerComponent.ItemHandlerData(nbt));
             } else {
-                stack.set(ComponentRegistry.ITEM_HANDLER_COMPONENT.get(), new ComponentRegistry.ItemHandlerData(new CompoundTag()));
+                stack.set(ComponentRegistry.ITEM_HANDLER_COMPONENT.get(), new ItemHandlerComponent.ItemHandlerData(new CompoundTag()));
             }
         }
         if (ArsenalCore.curiosLoaded) {
@@ -34,7 +35,7 @@ public class WeaponFrogItem extends Item {
     }
 
     public static ItemStackHandler getInventory(ItemStack stack, Level level) {
-        ComponentRegistry.ItemHandlerData data = stack.get(ComponentRegistry.ITEM_HANDLER_COMPONENT.get());
+        ItemHandlerComponent.ItemHandlerData data = stack.get(ComponentRegistry.ITEM_HANDLER_COMPONENT.get());
         ItemStackHandler handler = new ItemStackHandler(1);
 
         if (data != null && level != null) {
@@ -54,7 +55,7 @@ public class WeaponFrogItem extends Item {
             try {
                 HolderLookup.Provider registries = level.registryAccess();
                 CompoundTag nbt = handler.serializeNBT(registries);
-                stack.set(ComponentRegistry.ITEM_HANDLER_COMPONENT.get(), new ComponentRegistry.ItemHandlerData(nbt));
+                stack.set(ComponentRegistry.ITEM_HANDLER_COMPONENT.get(), new ItemHandlerComponent.ItemHandlerData(nbt));
             } catch (Exception e) {
                 e.printStackTrace();
             }

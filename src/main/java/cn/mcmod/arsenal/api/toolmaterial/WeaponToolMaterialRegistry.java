@@ -1,11 +1,11 @@
-package cn.mcmod.arsenal.api.tier;
+package cn.mcmod.arsenal.api.toolmaterial;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.util.Set;
 
 
-public class WeaponTierRegistry {
+public class WeaponToolMaterialRegistry {
     private static final BiMap<String, WeaponToolMaterial> TIER_REG = HashBiMap.create();
 
     public static void register(String name, WeaponToolMaterial tier) {

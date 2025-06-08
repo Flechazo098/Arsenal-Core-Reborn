@@ -2,8 +2,8 @@ package cn.mcmod.arsenal.item.rapier;
 
 import cn.mcmod.arsenal.api.IDrawable;
 import cn.mcmod.arsenal.api.WeaponFeature;
-import cn.mcmod.arsenal.api.tier.IWeaponToolMaterial;
-import cn.mcmod.arsenal.api.tier.WeaponToolMaterial;
+import cn.mcmod.arsenal.api.toolmaterial.IWeaponToolMaterial;
+import cn.mcmod.arsenal.api.toolmaterial.WeaponToolMaterial;
 import java.util.List;
 import java.util.function.Consumer;
 
