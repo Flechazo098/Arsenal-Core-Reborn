@@ -28,6 +28,12 @@ public class NetPacketHandler {
                 .consumerMainThread(DrawSwordPacket::handler)
                 .add();
 
+        INSTANCE.messageBuilder(XuanyuanSkillPacket.class, nextID(), NetworkDirection.PLAY_TO_SERVER)
+                .encoder(XuanyuanSkillPacket::toBytes)
+                .decoder(XuanyuanSkillPacket::new)
+                .consumerMainThread(XuanyuanSkillPacket::handler)
+                .add();
+
         INSTANCE.registerMessage(
                 nextID(),
                 SheathSyncPacket.class,

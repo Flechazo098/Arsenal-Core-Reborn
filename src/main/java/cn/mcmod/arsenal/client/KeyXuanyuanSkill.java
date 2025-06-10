@@ -1,8 +1,7 @@
 package cn.mcmod.arsenal.client;
 
-import cn.mcmod.arsenal.ArsenalCore;
-import cn.mcmod.arsenal.net.DrawSwordPacket;
 import cn.mcmod.arsenal.net.NetPacketHandler;
+import cn.mcmod.arsenal.net.XuanyuanSkillPacket;
 import com.mojang.blaze3d.platform.InputConstants.Type;
 import net.minecraft.client.KeyMapping;
 import net.minecraftforge.api.distmarker.Dist;
@@ -13,13 +12,13 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber({Dist.CLIENT})
-public class KeyDrawSword {
-    public static final KeyMapping DRAW_SWORD_KEY = new KeyMapping("key.draw_sword", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, Type.MOUSE, 1, "key.category.arsenal");
+public class KeyXuanyuanSkill {
+    public static final KeyMapping XUANYUAN_SKILL_KEY = new KeyMapping("key.xuanyuan_skill", KeyConflictContext.IN_GAME, KeyModifier.NONE, Type.KEYSYM, 82, "key.category.arsenal"); // R键
 
     @SubscribeEvent
     public static void onKeyboardInput(InputEvent.Key event) {
-        if (DRAW_SWORD_KEY.isDown() && ArsenalCore.curiosLoaded) {
-            NetPacketHandler.INSTANCE.sendToServer(new DrawSwordPacket("Reika Battou"));
+        if (XUANYUAN_SKILL_KEY.consumeClick()) {
+            NetPacketHandler.INSTANCE.sendToServer(new XuanyuanSkillPacket());
         }
     }
 }

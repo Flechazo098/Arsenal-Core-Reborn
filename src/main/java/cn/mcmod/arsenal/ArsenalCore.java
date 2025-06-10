@@ -2,10 +2,12 @@ package cn.mcmod.arsenal;
 
 import cn.mcmod.arsenal.api.tier.WeaponTierRegistry;
 import cn.mcmod.arsenal.compat.ultramarine.UltramarineCompat;
+import cn.mcmod.arsenal.event.CommonEventHandler;
 import cn.mcmod.arsenal.item.ArsenalCreativeModTab;
 import cn.mcmod.arsenal.item.ItemRegistry;
 import cn.mcmod.arsenal.net.NetPacketHandler;
 import cn.mcmod.arsenal.tier.VanillaWeaponTiers;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -30,6 +32,7 @@ public class ArsenalCore {
         ItemRegistry.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ArsenalCreativeModTab.CREATIVE_MODE_TABS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ArsenalConfig.SPEC);
+        MinecraftForge.EVENT_BUS.register(CommonEventHandler.class);
     }
 
     private void registerVanillaTiers() {

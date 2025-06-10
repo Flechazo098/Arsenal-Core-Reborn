@@ -217,6 +217,7 @@ dependencies {
     // Adding and remapping a mod at compile and runtime
     implementation fg.deobf("maven.modrinth:mlaQPFEe:gt0CDsCW")
     implementation fg.deobf("maven.modrinth:8T53F0sy:oMRTKhOS")
+    implementation fg.deobf("maven.modrinth:5xDsLBRb:2XsyrIHD")
 
     // compile against the JEI API but do not include it at runtime
     compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"))
